@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>รายงานผลการดำเนินงาน OPD ต.ค. 2569</title>
+<!-- ตั้งใจออกแบบให้อ่านยาก: ใช้สำหรับกิจกรรมในห้องเรียน -->
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #8a8a8a; font-family: 'Times New Roman', 'Thonburi', serif; color: #111; font-size: 13px; }
+  .page { background: #fff; width: 900px; max-width: calc(100% - 24px); margin: 18px auto; padding: 48px 60px; box-shadow: 0 2px 10px rgba(0,0,0,.4); }
+  .head { text-align: center; margin-bottom: 18px; }
+  .head h1 { font-size: 17px; margin: 0; }
+  .head p { margin: 2px 0; font-size: 12px; }
+  p { text-align: justify; line-height: 1.6; text-indent: 40px; margin: 0 0 10px; }
+  h2 { font-size: 14px; margin: 18px 0 6px; text-decoration: underline; }
+  table { border-collapse: collapse; width: 100%; font-size: 10.5px; margin: 6px 0 14px; }
+  th, td { border: 1px solid #555; padding: 2px 4px; text-align: center; white-space: nowrap; }
+  th { background: #e6e6e6; font-weight: bold; }
+  .row { display: flex; gap: 20px; align-items: center; margin: 8px 0 14px; }
+  .row svg { flex: none; }
+  .small { font-size: 10px; color: #444; }
+  .sign { margin-top: 30px; text-align: right; line-height: 1.8; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="head">
+    <h1>รายงานผลการดำเนินงานแผนกผู้ป่วยนอก (OPD) ประจำเดือนตุลาคม พ.ศ. 2569</h1>
+    <p>โรงพยาบาลสุขใจ · กลุ่มงานบริการทางการแพทย์</p>
+    <p>เลขที่ รพ.สจ. 0032/2569 · วันที่ 31 ตุลาคม 2569</p>
+  </div>
+
+  <h2>1. บทนำ</h2>
+  <p>ตามที่โรงพยาบาลสุขใจได้มีนโยบายพัฒนาคุณภาพบริการผู้ป่วยนอกอย่างต่อเนื่อง ตามแผนยุทธศาสตร์ ปี 2567–2571 ประเด็นยุทธศาสตร์ที่ 2 ว่าด้วยการยกระดับประสบการณ์ผู้รับบริการ และสอดคล้องกับเกณฑ์มาตรฐาน HA ตอนที่ III หมวดกระบวนการดูแลผู้ป่วย กลุ่มงานบริการทางการแพทย์จึงได้จัดทำรายงานฉบับนี้ขึ้นเพื่อสรุปผลการดำเนินงานประจำเดือน ซึ่งครอบคลุมข้อมูลด้านปริมาณงาน สิทธิการรักษา ระยะเวลาในการให้บริการ และข้อมูลประกอบอื่น ๆ ที่เกี่ยวข้อง โดยรวบรวมจากระบบ HOSxP และแบบบันทึกของหน่วยงาน</p>
+
+  <h2>2. ปริมาณผู้รับบริการ</h2>
+  <p>ในเดือนตุลาคม 2569 มีผู้ป่วยนอกมารับบริการรวมทั้งสิ้น 14,080 ราย คิดเป็นค่าเฉลี่ย 640 รายต่อวันทำการ เพิ่มขึ้นจากเดือนก่อนหน้าร้อยละ 3.2 โดยจำแนกตามสิทธิการรักษาได้ดังแผนภูมิด้านล่าง ทั้งนี้ผู้ป่วยสิทธิหลักประกันสุขภาพถ้วนหน้ายังคงเป็นกลุ่มที่มีสัดส่วนสูงที่สุด รองลงมาคือสิทธิประกันสังคม และสิทธิข้าราชการตามลำดับ</p>
+  <div class="row">
+    <svg width="170" height="130" viewBox="0 0 170 130" id="pie"></svg>
+    <div class="small" id="pie-legend"></div>
+  </div>
+
+  <h2>3. ระยะเวลาการให้บริการ</h2>
+  <p>ระยะเวลาเฉลี่ยตั้งแต่ผู้ป่วยยื่นบัตรจนถึงรับยาเสร็จสิ้นในเดือนนี้เท่ากับ <span id="avg"></span> ชั่วโมง:นาที:วินาที ทั้งนี้หน่วยงานได้สุ่มตัวอย่างข้อมูลเวลาเข้า–ออกของแต่ละจุดบริการจากระบบ จำนวน 40 รายการ เพื่อใช้ประกอบการทบทวนกระบวนการ ดังรายละเอียดในตารางที่ 1 ซึ่งแสดงเวลาบันทึกในระบบของแต่ละขั้นตอนตามลำดับ (เวลาในรูปแบบ ชม:นท:วท)</p>
+
+  <p class="small"><b>ตารางที่ 1</b> เวลาบันทึกในระบบรายผู้ป่วย (สุ่มตัวอย่าง วันที่ 15 ต.ค. 2569)</p>
+  <table id="log"></table>
+
+  <h2>4. ข้อมูลประกอบอื่น ๆ</h2>
+  <p>อัตรากำลังของแผนกผู้ป่วยนอกในเดือนนี้ประกอบด้วย เจ้าหน้าที่เวชระเบียน 4 อัตรา พยาบาลวิชาชีพจุดคัดกรอง 6 อัตรา แพทย์ออกตรวจเฉลี่ย 12 อัตราต่อวัน เจ้าหน้าที่การเงิน 3 อัตรา และเภสัชกรประจำห้องจ่ายยา 2 อัตรา ซึ่งเป็นไปตามกรอบอัตรากำลังที่ได้รับอนุมัติ นอกจากนี้ในเดือนที่ผ่านมามีการจัดกิจกรรม 5ส ประจำไตรมาส การอบรมการช่วยฟื้นคืนชีพขั้นพื้นฐานให้แก่บุคลากร และการปรับปรุงพื้นที่นั่งรอบริเวณชั้น 1 โดยเพิ่มเก้าอี้จำนวน 40 ที่นั่ง ผลการประเมินความพึงพอใจของผู้รับบริการอยู่ในระดับดี (ค่าเฉลี่ย 3.92 จาก 5 คะแนน) มีข้อเสนอแนะจากผู้รับบริการรวม 57 เรื่อง ซึ่งได้ส่งต่อให้หน่วยงานที่เกี่ยวข้องพิจารณาแล้ว</p>
+
+  <h2>5. สรุป</h2>
+  <p>ภาพรวมการดำเนินงานของแผนกผู้ป่วยนอกในเดือนตุลาคม 2569 เป็นไปตามแผนที่วางไว้ หน่วยงานจะติดตามผลการดำเนินงานอย่างต่อเนื่อง และนำเสนอผู้บริหารในการประชุมคณะกรรมการบริหารโรงพยาบาลครั้งต่อไป</p>
+
+  <div class="sign">(ลงชื่อ) ................................................<br>หัวหน้ากลุ่มงานบริการทางการแพทย์</div>
+</div>
+
+<script>
+  // ข้อมูลชุดเดียวกับ 3_easy.html: เวลาเฉลี่ยแต่ละจุด 8, 12, 26, 9, 9, 48 นาที
+  let seed = 1510;
+  const rnd = () => { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; };
+  const mean = [8, 12, 26, 9, 9, 48];
+  const pad2 = (n) => String(n).padStart(2, '0');
+  const hms = (sec) => `${pad2(Math.floor(sec / 3600))}:${pad2(Math.floor(sec / 60) % 60)}:${pad2(sec % 60)}`;
+
+  // เวลาแต่ละขั้นตอนเป็นเวลาบันทึกดิบ ผู้อ่านต้องลบกันเองถึงจะรู้ว่าจุดไหนนาน
+  const cols = ['HN', 'ยื่นบัตร', 'ลงทะเบียนเสร็จ', 'คัดกรองเสร็จ', 'เรียกพบแพทย์', 'ออกห้องตรวจ', 'ชำระเงินเสร็จ', 'รับยาเสร็จ', 'สิทธิ'];
+  const rights = ['UC', 'SSO', 'CSMBS', 'UC', 'UC', 'SSO', 'CASH'];
+  let rows = '', sum = 0;
+  for (let i = 0; i < 40; i++) {
+    let t = 7 * 3600 + 30 * 60 + Math.floor(rnd() * 6.5 * 3600);
+    const cells = [`${650000 + Math.floor(rnd() * 99999)}`, hms(t)];
+    const start = t;
+    mean.forEach(m => { t += Math.round(m * 60 * (0.6 + rnd() * 0.8)); cells.push(hms(t)); });
+    sum += t - start;
+    cells.push(rights[Math.floor(rnd() * rights.length)]);
+    rows += '<tr>' + cells.map(c => `<td>${c}</td>`).join('') + '</tr>';
+  }
+  document.getElementById('log').innerHTML = '<tr>' + cols.map(c => `<th>${c}</th>`).join('') + '</tr>' + rows;
+  document.getElementById('avg').textContent = hms(Math.round(sum / 40));
+
+  // แผนภูมิวงกลมสิทธิการรักษา (ไม่เกี่ยวกับปัญหา)
+  (function () {
+    const data = [['หลักประกันสุขภาพถ้วนหน้า (UC)', 52], ['ประกันสังคม (SSO)', 24], ['ข้าราชการ (CSMBS)', 15], ['ชำระเงินเอง', 6], ['อื่น ๆ', 3]];
+    const shades = ['#333', '#666', '#999', '#bbb', '#ddd'];
+    let a = -Math.PI / 2, s = '';
+    data.forEach(([, v], i) => {
+      const b = a + v / 100 * Math.PI * 2, large = b - a > Math.PI ? 1 : 0;
+      s += `<path d="M85 65 L${85 + 58 * Math.cos(a)} ${65 + 58 * Math.sin(a)} A58 58 0 ${large} 1 ${85 + 58 * Math.cos(b)} ${65 + 58 * Math.sin(b)} Z" fill="${shades[i]}" stroke="#fff"/>`;
+      a = b;
+    });
+    document.getElementById('pie').innerHTML = s;
+    document.getElementById('pie-legend').innerHTML = data.map(([k, v], i) => `<div><span style="display:inline-block;width:9px;height:9px;background:${shades[i]};border:1px solid #555"></span> ${k} ร้อยละ ${v}</div>`).join('');
+  })();
+</script>
+</body>
+</html>

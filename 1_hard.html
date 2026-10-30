@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FZ_DB_v3_final(2)</title>
+<!-- ตั้งใจออกแบบให้อ่านยาก: ใช้สำหรับกิจกรรมในห้องเรียน -->
+<style>
+  body { margin: 0; background: #e9e9e9; font-family: Tahoma, Arial, sans-serif; font-size: 11px; color: #555; }
+  .top { background: linear-gradient(90deg, #6a1b9a, #00838f, #ef6c00); color: #fff; padding: 6px 10px; font-size: 13px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 6px; padding: 6px; }
+  .p { background: #fff; border: 1px solid #ccc; padding: 6px; min-width: 0; }
+  .p h3 { margin: 0 0 4px; font-size: 10px; font-weight: normal; color: #999; text-transform: uppercase; }
+  .big { font-size: 26px; color: #00838f; font-weight: bold; }
+  .wide { grid-column: span 2; }
+  .tbl { grid-column: 1 / -1; }
+  .scroll { max-height: 230px; overflow: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 10px; font-family: 'Courier New', monospace; }
+  th, td { border: 1px solid #ddd; padding: 2px 4px; text-align: left; white-space: nowrap; }
+  th { background: #f3f3f3; color: #888; }
+  svg { width: 100%; height: auto; max-height: 150px; display: block; }
+  .lg { font-size: 9px; color: #999; line-height: 1.3; }
+  @media (max-width: 520px) { .wide { grid-column: auto; } }
+</style>
+</head>
+<body>
+<div class="top">FZ_DB_v3_final(2) &nbsp;|&nbsp; ALL BRANCH / ARI &nbsp;|&nbsp; last refresh: 2026-10-30T01:00:00Z</div>
+<div class="grid" id="g"></div>
+
+<script>
+// ข้อมูลจำลอง: สมาชิก FitZone สาขาอารีย์ (ข้อมูล ณ 30 ต.ค. 2026)
+// ทั้งสอง dashboard ใช้ไฟล์นี้ร่วมกัน ข้อมูลจึงเหมือนกันทุกตัว
+(function () {
+  let seed = 20261030;
+  const rnd = () => { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; };
+  const pick = (arr) => arr[Math.floor(rnd() * arr.length)];
+  const int = (a, b) => a + Math.floor(rnd() * (b - a + 1));
+
+  const firstNames = ['กมล', 'ณัฐวุฒิ', 'พิมพ์ชนก', 'ธนากร', 'ศิริพร', 'อรรถพล', 'ชนิดา', 'วรเมธ', 'ปวีณา', 'กิตติพัฒน์',
+    'สุภัสสรา', 'ภานุวัฒน์', 'จิราพร', 'ธีรวัฒน์', 'นภัสสร', 'เอกชัย', 'ณิชา', 'พงศกร', 'รัชนี', 'ศุภกร',
+    'มนัสนันท์', 'ปิยะพงษ์', 'อัญชลี', 'วีรยุทธ', 'ลลิตา', 'ชยพล', 'กัญญาณัฐ', 'ธนวัฒน์', 'พรรณี', 'สิทธิชัย'];
+  const lastInitials = ['ก.', 'จ.', 'ช.', 'ท.', 'น.', 'ป.', 'พ.', 'ม.', 'ร.', 'ว.', 'ส.', 'อ.'];
+  const packages = [
+    { code: 'M1', name: 'รายเดือน' },
+    { code: 'M3', name: '3 เดือน' },
+    { code: 'Y1', name: 'รายปี' },
+    { code: 'PT10', name: 'PT 10 ครั้ง' },
+  ];
+
+  const members = [];
+  for (let i = 0; i < 60; i++) {
+    // ให้ประมาณหนึ่งในสามเป็นกลุ่มที่ห่างหายไป
+    const fading = rnd() < 0.35;
+    const daysSinceVisit = fading ? int(12, 38) : int(0, 9);
+    const daysToExpiry = int(1, 75);
+    const base = fading ? int(2, 4) : int(2, 5);
+    const visits4w = fading
+      ? [base, Math.max(0, base - int(0, 2)), Math.max(0, base - int(1, 3)), 0]
+      : [base, int(1, 5), int(2, 5), int(1, 5)];
+    const pkg = pick(packages);
+
+    const absence = Math.min(daysSinceVisit / 30, 1);
+    const expiring = 1 - Math.min(daysToExpiry / 60, 1);
+    const drop = Math.max(0, (visits4w[0] - visits4w[3]) / 5);
+    const risk = Math.min(0.9999, absence * 0.5 + expiring * 0.3 + drop * 0.2);
+
+    members.push({
+      id: 'FZ-' + (10231 + i * 7),
+      name: pick(firstNames) + ' ' + pick(lastInitials),
+      phone: '08' + int(1, 9) + '-' + int(100, 999) + '-' + int(1000, 9999),
+      pkg,
+      age: int(19, 58),
+      gender: rnd() < 0.52 ? 'F' : 'M',
+      daysSinceVisit,
+      daysToExpiry,
+      visits4w,
+      risk,
+      level: risk >= 0.6 ? 'high' : risk >= 0.4 ? 'medium' : 'low',
+      contacted: rnd() < 0.25 ? (rnd() < 0.5 ? 'called' : 'booked') : 'none',
+    });
+  }
+
+  window.FITZONE = {
+    asOf: 'ศุกร์ 30 ต.ค. 2026 · 08:00',
+    branch: 'สาขาอารีย์',
+    totalMembers: 1284,
+    members,
+    renewal: [
+      { month: 'พ.ค.', rate: 82 }, { month: 'มิ.ย.', rate: 79 }, { month: 'ก.ค.', rate: 77 },
+      { month: 'ส.ค.', rate: 74 }, { month: 'ก.ย.', rate: 73 }, { month: 'ต.ค.', rate: 71 },
+    ],
+    renewalTarget: 80,
+  };
+})();
+</script>
+<script>
+  const D = window.FITZONE, M = D.members;
+  const rainbow = ['#e53935', '#fb8c00', '#fdd835', '#43a047', '#00acc1', '#1e88e5', '#8e24aa', '#d81b60', '#6d4c41', '#c0ca33'];
+  const g = document.getElementById('g');
+  const panel = (title, html, cls = '') => g.insertAdjacentHTML('beforeend', `<div class="p ${cls}"><h3>${title}</h3>${html}</div>`);
+  const count = (arr, f) => arr.reduce((o, x) => (o[f(x)] = (o[f(x)] || 0) + 1, o), {});
+
+  function pie(obj, donut) {
+    const entries = Object.entries(obj), tot = entries.reduce((s, [, v]) => s + v, 0);
+    let a = -Math.PI / 2, s = '<svg viewBox="0 0 120 120">';
+    entries.forEach(([k, v], i) => {
+      const b = a + v / tot * Math.PI * 2, large = b - a > Math.PI ? 1 : 0;
+      s += `<path d="M60 60 L${60 + 55 * Math.cos(a)} ${60 + 55 * Math.sin(a)} A55 55 0 ${large} 1 ${60 + 55 * Math.cos(b)} ${60 + 55 * Math.sin(b)} Z" fill="${rainbow[i % 10]}"/>`;
+      a = b;
+    });
+    if (donut) s += '<circle cx="60" cy="60" r="28" fill="#fff"/>';
+    s += '</svg><div class="lg">' + entries.map(([k], i) => `<span style="color:${rainbow[i % 10]}">■</span>${k} `).join('') + '</div>';
+    return s;
+  }
+
+  // ตัวเลขรวม ไม่บอกว่าดีหรือแย่
+  panel('TTL_MEM', `<div class="big">${D.totalMembers.toLocaleString()}</div>`);
+  panel('REV_YTD', `<div class="big">฿18.4M</div>`);
+  panel('AVG_AGE', `<div class="big">${(M.reduce((s, m) => s + m.age, 0) / M.length).toFixed(2)}</div>`);
+  panel('CHK_IN_MTD', `<div class="big">24,512</div>`);
+  panel('RS_AVG', `<div class="big">${(M.reduce((s, m) => s + m.risk, 0) / M.length).toFixed(4)}</div>`);
+  panel('NPS', `<div class="big">42</div>`);
+
+  panel('GENDER', pie(count(M, m => m.gender)));
+  panel('PKG_MIX', pie(count(M, m => m.pkg.code), true));
+  panel('AGE_GRP', pie(count(M, m => m.age < 25 ? '<25' : m.age < 35 ? '25-34' : m.age < 45 ? '35-44' : '45+')));
+  panel('ZONE_USE', pie({ WEIGHT: 41, CARDIO: 33, CLASS: 18, POOL: 6, OTHER: 2 }, true));
+
+  // เกจอัตราต่ออายุ ไม่มีเป้า
+  (function () {
+    const r = D.renewal[D.renewal.length - 1].rate, ang = Math.PI * (1 - r / 100);
+    panel('RNW_RT', `<svg viewBox="0 0 120 70">
+      <path d="M10 60 A50 50 0 0 1 110 60" fill="none" stroke="#eee" stroke-width="12"/>
+      <path d="M10 60 A50 50 0 0 1 ${60 + 50 * Math.cos(ang)} ${60 - 50 * Math.sin(ang)}" fill="none" stroke="#43a047" stroke-width="12"/>
+      <text x="60" y="58" text-anchor="middle" font-size="14" fill="#43a047">${r}</text></svg>`);
+  })();
+
+  // แกน y สองแกน: เช็กอินกับรายได้
+  (function () {
+    const chk = [21800, 22650, 23900, 23100, 24200, 24512], rev = [2.9, 3.1, 3.0, 3.2, 3.0, 3.1];
+    let s = '<svg viewBox="0 0 300 130">';
+    chk.forEach((v, i) => s += `<rect x="${20 + i * 44}" y="${110 - (v - 20000) / 5000 * 100}" width="26" height="${(v - 20000) / 5000 * 100}" fill="${rainbow[i]}"/>`);
+    s += `<polyline fill="none" stroke="#000" stroke-width="1" points="${rev.map((v, i) => (33 + i * 44) + ',' + (110 - (v - 2.8) / 0.5 * 100)).join(' ')}"/>`;
+    s += '<text x="2" y="10" font-size="8" fill="#999">25k</text><text x="2" y="110" font-size="8" fill="#999">20k</text>';
+    s += '<text x="280" y="10" font-size="8" fill="#999">3.3</text><text x="280" y="110" font-size="8" fill="#999">2.8</text>';
+    D.renewal.forEach((d, i) => s += `<text x="${33 + i * 44}" y="124" font-size="8" text-anchor="middle" fill="#999">${d.month}</text>`);
+    panel('CHK_vs_REV (M)', s + '</svg>', 'wide');
+  })();
+
+  // คะแนนความเสี่ยงรายคน เรียงตามรหัส ไม่มีชื่อ
+  (function () {
+    let s = '<svg viewBox="0 0 300 110">';
+    M.forEach((m, i) => s += `<rect x="${4 + i * 4.9}" y="${100 - m.risk * 95}" width="4" height="${m.risk * 95}" fill="${rainbow[i % 10]}"><title>${m.id}: ${m.risk.toFixed(4)}</title></rect>`);
+    panel('RS_BY_MID', s + '</svg>', 'wide');
+  })();
+
+  // ข้อมูลดิบ เรียงตามรหัสสมาชิก
+  (function () {
+    const rows = M.map(m => `<tr><td>${m.id}</td><td>${m.pkg.code}</td><td>${m.gender}</td><td>${m.age}</td><td>${m.daysToExpiry}</td><td>${m.daysSinceVisit}</td><td>${m.visits4w.join('|')}</td><td>${m.risk.toFixed(4)}</td><td>${m.contacted === 'none' ? 0 : 1}</td><td>${m.phone.replace(/-/g, '')}</td></tr>`).join('');
+    panel('RAW_MEM_TBL (n=' + M.length + ')', `<div class="scroll"><table>
+      <tr><th>MID</th><th>PKG_CD</th><th>G</th><th>AGE</th><th>EXP_D</th><th>LV_D</th><th>F4W</th><th>RS</th><th>CT_FLG</th><th>TEL</th></tr>${rows}</table></div>`, 'tbl');
+  })();
+</script>
+</body>
+</html>

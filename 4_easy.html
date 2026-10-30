@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FreshMart Fresh Zone</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@500&family=IBM+Plex+Sans+Thai+Looped:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #f2f6f5;
+    --surface-1: #ffffff;
+    --ink: #0f2a2e;
+    --border: #dbe5e3;
+    --grid: #e8efee;
+    --track: #eef3f2;
+    --text-primary: #0f2a2e;
+    --text-secondary: #42575a;
+    --text-muted: #6b8184;
+    --sold: #1b8f6a;
+    --left: #e34948;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #0f1514;
+      --surface-1: #172120;
+      --ink: #e8f1ef;
+      --border: #263533;
+      --grid: #22302e;
+      --track: #22302e;
+      --text-primary: #e8f1ef;
+      --text-secondary: #b9c9c6;
+      --text-muted: #8ea2a3;
+      --sold: #2fb488;
+      --left: #e66767;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #0f1514;
+    --surface-1: #172120;
+    --ink: #e8f1ef;
+    --border: #263533;
+    --grid: #22302e;
+    --track: #22302e;
+    --text-primary: #e8f1ef;
+    --text-secondary: #b9c9c6;
+    --text-muted: #8ea2a3;
+    --sold: #2fb488;
+    --left: #e66767;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; overflow: hidden; }
+  body { background: var(--bg); color: var(--text-primary); font-family: 'IBM Plex Sans Thai Looped', system-ui, sans-serif; font-size: 16px; line-height: 1.4; }
+  h1 { font-family: 'Mitr', sans-serif; font-weight: 500; }
+
+  /* ผืนงานขนาดคงที่ 1600×900 ย่อขยายให้พอดีจอเหมือนสไลด์ */
+  .stage { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; transform-origin: 0 0; padding: 24px 36px 26px; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 16px; }
+
+  header { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; }
+  .brand { font-size: 14px; color: var(--text-muted); letter-spacing: 0.04em; }
+  h1 { font-size: 30px; margin: 0; line-height: 1.2; }
+  .figs { display: flex; gap: 10px; }
+  .fig { background: var(--surface-1); border: 1px solid var(--border); border-radius: 999px; padding: 8px 20px; display: flex; align-items: baseline; gap: 8px; }
+  .fig b { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .fig span { font-size: 14px; color: var(--text-secondary); }
+
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr) 430px; gap: 16px; min-height: 0; }
+  .card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px; padding: 16px 22px; min-width: 0; min-height: 0; }
+  h2 { font-size: 19px; font-weight: 600; margin: 0; }
+  .desc { color: var(--text-muted); font-size: 14px; margin: 0 0 8px; }
+
+  /* รายการสินค้า: แท่ง 100% ของยอดสั่ง แบ่งเป็นขายได้กับขายไม่ออก */
+  .list-head, .item { display: grid; grid-template-columns: 310px minmax(0, 1fr) 110px 140px 120px; gap: 18px; align-items: center; }
+  .list-head { font-size: 13px; color: var(--text-muted); font-weight: 600; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  .r { text-align: right; }
+  .item { height: 40px; border-bottom: 1px solid var(--grid); }
+  .item .p { white-space: nowrap; }
+  .item .p b { font-weight: 600; font-size: 15px; }
+  .item .p span { font-size: 13px; color: var(--text-muted); margin-left: 6px; }
+  .chips { display: flex; gap: 6px; margin-bottom: 8px; }
+  .chip { border: 1px solid var(--border); background: transparent; color: var(--text-secondary); border-radius: 8px; padding: 3px 14px; font: inherit; font-size: 14px; cursor: pointer; }
+  .chip[aria-pressed="true"] { background: var(--ink); color: var(--surface-1); border-color: var(--ink); }
+  .split { display: flex; height: 22px; gap: 2px; }
+  .split i { display: flex; align-items: center; height: 100%; font-style: normal; font-size: 12px; font-weight: 600; color: #fff; padding: 0 8px; white-space: nowrap; overflow: hidden; }
+  .split .s { background: var(--sold); border-radius: 4px 0 0 4px; }
+  .split .l { background: var(--left); border-radius: 0 4px 4px 0; justify-content: flex-end; }
+  .qty { font-size: 14px; color: var(--text-secondary); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .pct { font-weight: 700; color: var(--left); font-variant-numeric: tabular-nums; }
+  .baht { font-weight: 700; font-variant-numeric: tabular-nums; font-size: 16px; }
+  .legend { display: flex; gap: 18px; font-size: 14px; color: var(--text-secondary); margin-top: 10px; }
+  .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-right: 6px; }
+
+  .side { display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 16px; min-height: 0; }
+  .chart svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .cat-row { display: grid; grid-template-columns: 84px minmax(0, 1fr) 96px; gap: 10px; align-items: center; font-size: 15px; padding: 6px 0; }
+  .cat-row .bar { height: 14px; background: var(--track); border-radius: 0 4px 4px 0; overflow: hidden; }
+  .cat-row .bar i { display: block; height: 100%; background: var(--left); border-radius: 0 4px 4px 0; }
+  .cat-row .v { text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <header>
+    <div>
+      <div class="brand">FRESHMART · สาขาพระราม 9 · เฉลี่ย 4 สัปดาห์ล่าสุด (3–30 ต.ค. 2026)</div>
+      <h1>แผนกของสด</h1>
+    </div>
+    <div class="figs">
+      <div class="fig"><b id="f-order"></b><span>มูลค่าสั่งเข้าต่อสัปดาห์</span></div>
+      <div class="fig"><b id="f-left"></b><span>มูลค่าที่ขายไม่ออกต่อสัปดาห์</span></div>
+      <div class="fig"><b id="f-pct"></b><span>ของมูลค่าสั่งเข้า</span></div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <section class="card">
+      <h2>ยอดสั่งเข้าเทียบยอดขาย รายสินค้า</h2>
+      <p class="desc">ความยาวแท่ง = ยอดสั่งเข้าทั้งหมด (100%) · เรียงตามมูลค่าที่ขายไม่ออก มากไปน้อย</p>
+      <div class="chips" role="group" aria-label="หมวดสินค้า" id="chips"></div>
+      <div class="list-head"><span>สินค้า (ต้นทุนต่อหน่วย)</span><span>สัดส่วนที่ขายได้ / ขายไม่ออก</span><span class="r">ขายไม่ออก</span><span class="r">ขาย / สั่ง ต่อวัน</span><span class="r">ขายไม่ออก (บาท/สัปดาห์)</span></div>
+      <div id="list"></div>
+      <div class="legend"><span><i style="background:var(--sold)"></i>ขายได้</span><span><i style="background:var(--left)"></i>ขายไม่ออก (ทิ้งหรือลดราคาปิดวัน)</span></div>
+    </section>
+
+    <div class="side">
+      <section class="card">
+        <h2>มูลค่าที่ขายไม่ออก รายสัปดาห์ (บาท)</h2>
+        <p class="desc">8 สัปดาห์ล่าสุด · ป้ายใต้แท่ง = วันเริ่มสัปดาห์</p>
+        <div class="chart" id="weekly"></div>
+      </section>
+      <section class="card">
+        <h2>มูลค่าที่ขายไม่ออก แยกตามหมวด</h2>
+        <p class="desc">บาทต่อสัปดาห์</p>
+        <div id="cats"></div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ข้อมูลจำลอง: แผนกของสด FreshMart สาขาพระราม 9 (3–30 ต.ค. 2026)
+  // order/sold = จำนวนเฉลี่ยต่อวัน, cost = ต้นทุนต่อหน่วย (บาท)
+  const PRODUCTS = [
+    { name: 'ขนมปังโฮลวีท', cat: 'เบเกอรี่', unit: 'แถว', order: 120, sold: 64, cost: 42 },
+    { name: 'สลัดผักพร้อมทาน', cat: 'ผัก', unit: 'กล่อง', order: 90, sold: 41, cost: 55 },
+    { name: 'สตรอว์เบอร์รีเกาหลี', cat: 'ผลไม้', unit: 'แพ็ก', order: 60, sold: 31, cost: 95 },
+    { name: 'อกไก่สด', cat: 'เนื้อสัตว์', unit: 'กก.', order: 80, sold: 61, cost: 85 },
+    { name: 'ครัวซองต์เนยสด', cat: 'เบเกอรี่', unit: 'ชิ้น', order: 150, sold: 118, cost: 22 },
+    { name: 'แซลมอนสไลซ์', cat: 'เนื้อสัตว์', unit: 'แพ็ก', order: 40, sold: 34, cost: 160 },
+    { name: 'นมสดพาสเจอร์ไรส์ 2 ลิตร', cat: 'นม', unit: 'ขวด', order: 110, sold: 101, cost: 78 },
+    { name: 'ผักบุ้ง', cat: 'ผัก', unit: 'กำ', order: 140, sold: 118, cost: 12 },
+    { name: 'หมูสับ', cat: 'เนื้อสัตว์', unit: 'กก.', order: 70, sold: 66, cost: 110 },
+    { name: 'กล้วยหอม', cat: 'ผลไม้', unit: 'หวี', order: 85, sold: 79, cost: 35 },
+    { name: 'โยเกิร์ตรสธรรมชาติ', cat: 'นม', unit: 'ถ้วย', order: 200, sold: 192, cost: 14 },
+    { name: 'มะเขือเทศเชอร์รี', cat: 'ผัก', unit: 'แพ็ก', order: 75, sold: 70, cost: 30 },
+    { name: 'ไข่ไก่ เบอร์ 2 (10 ฟอง)', cat: 'นม', unit: 'แพ็ก', order: 160, sold: 156, cost: 48 },
+    { name: 'แอปเปิลฟูจิ', cat: 'ผลไม้', unit: 'แพ็ก', order: 65, sold: 63, cost: 65 },
+  ];
+  const WEEKLY = [
+    { w: '8 ก.ย.', v: 71200 }, { w: '15 ก.ย.', v: 74800 }, { w: '22 ก.ย.', v: 78100 }, { w: '29 ก.ย.', v: 82400 },
+    { w: '6 ต.ค.', v: 87900 }, { w: '13 ต.ค.', v: 91300 }, { w: '20 ต.ค.', v: 94600 }, { w: '27 ต.ค.', v: 98000 },
+  ];
+
+  const $ = (id) => document.getElementById(id);
+  const fmt = (n) => Math.round(n).toLocaleString();
+  PRODUCTS.forEach(p => {
+    p.left = p.order - p.sold;
+    p.leftBaht = p.left * 7 * p.cost;
+    p.orderBaht = p.order * 7 * p.cost;
+  });
+  PRODUCTS.sort((a, b) => b.leftBaht - a.leftBaht);
+  const sum = (arr, f) => arr.reduce((s, x) => s + f(x), 0);
+  const totalOrder = sum(PRODUCTS, p => p.orderBaht), totalLeft = sum(PRODUCTS, p => p.leftBaht);
+
+  $('f-order').textContent = fmt(totalOrder) + ' บาท';
+  $('f-left').textContent = fmt(totalLeft) + ' บาท';
+  $('f-pct').textContent = (totalLeft / totalOrder * 100).toFixed(1) + '%';
+
+  const cats = [...new Set(PRODUCTS.map(p => p.cat))];
+  let cat = 'ทั้งหมด';
+  $('chips').innerHTML = ['ทั้งหมด', ...cats].map(c => `<button class="chip" aria-pressed="${c === cat}" data-cat="${c}">${c}</button>`).join('');
+  $('chips').addEventListener('click', (e) => {
+    const b = e.target.closest('.chip'); if (!b) return;
+    cat = b.dataset.cat;
+    document.querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', x === b));
+    renderList();
+  });
+
+  function renderList() {
+  $('list').innerHTML = PRODUCTS.filter(p => cat === 'ทั้งหมด' || p.cat === cat).map(p => {
+    const sp = p.sold / p.order * 100;
+    return `<div class="item">
+      <div class="p"><b>${p.name}</b><span>${p.cost} บาท/${p.unit}</span></div>
+      <div class="split"><i class="s" style="width:${sp}%">ขายได้ ${Math.round(sp)}%</i><i class="l" style="width:${100 - sp}%"></i></div>
+      <div class="pct r">${Math.round(100 - sp)}%</div>
+      <div class="qty r">${p.sold} / ${p.order} ${p.unit}</div>
+      <div class="baht r">${fmt(p.leftBaht)}</div>
+    </div>`;
+  }).join('');
+  }
+  renderList();
+
+  // แยกตามหมวด
+  const byCat = cats.map(c => [c, sum(PRODUCTS.filter(p => p.cat === c), p => p.leftBaht)]).sort((a, b) => b[1] - a[1]);
+  const maxCat = byCat[0][1];
+  $('cats').innerHTML = byCat.map(([c, v]) => `<div class="cat-row"><span>${c}</span><div class="bar"><i style="width:${v / maxCat * 100}%"></i></div><span class="v">${fmt(v)} บาท</span></div>`).join('');
+
+  // กราฟแท่งรายสัปดาห์ ติดตัวเลขทุกแท่ง
+  (function () {
+    const W = 390, H = 250, pad = { l: 8, r: 8, t: 22, b: 24 }, max = 100000;
+    const bw = (W - pad.l - pad.r) / WEEKLY.length;
+    const y = (v) => pad.t + (1 - v / max) * (H - pad.t - pad.b);
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="มูลค่าที่ขายไม่ออกเพิ่มจาก 71,200 เป็น 98,000 บาทต่อสัปดาห์">`;
+    s += `<line x1="${pad.l}" x2="${W - pad.r}" y1="${y(0)}" y2="${y(0)}" stroke="var(--border)"/>`;
+    WEEKLY.forEach((d, i) => {
+      const x = pad.l + i * bw + 4, w = bw - 8;
+      s += `<path d="M${x} ${y(0)} V${y(d.v) + 4} q0 -4 4 -4 H${x + w - 4} q4 0 4 4 V${y(0)} Z" fill="var(--left)"/>`;
+      s += `<text x="${x + w / 2}" y="${y(d.v) - 6}" text-anchor="middle" font-size="12" font-weight="700" fill="var(--text-primary)">${(d.v / 1000).toFixed(1)}k</text>`;
+      s += `<text x="${x + w / 2}" y="${H - 6}" text-anchor="middle" font-size="12" fill="var(--text-secondary)">${d.w}</text>`;
+    });
+    $('weekly').innerHTML = s + '</svg>';
+  })();
+
+  // ย่อขยายผืนงานให้พอดีหน้าจอ
+  function fit() {
+    const st = $('stage'), s = Math.min(innerWidth / 1600, innerHeight / 900);
+    st.style.transform = `translate(${(innerWidth - 1600 * s) / 2}px, ${(innerHeight - 900 * s) / 2}px) scale(${s})`;
+  }
+  addEventListener('resize', fit);
+  fit();
+</script>
+</body>
+</html>

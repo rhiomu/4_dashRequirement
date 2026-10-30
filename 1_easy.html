@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Member Retention</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai+Looped:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #f4f4f2;
+    --surface-1: #fcfcfb;
+    --border: #e4e3df;
+    --grid: #ecebe7;
+    --text-primary: #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted: #6f6e69;
+    --series-1: #2a78d6;
+    --empty: #e9e8e4;
+    --warning: #fab219;
+    --critical: #d03b3b;
+    --critical-soft: #fbe9e8;
+    --warning-soft: #fdf3dd;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #111110;
+      --surface-1: #1a1a19;
+      --border: #2e2e2c;
+      --grid: #262624;
+      --text-primary: #f0efec;
+      --text-secondary: #c3c2b7;
+      --text-muted: #9a998f;
+      --series-1: #3987e5;
+      --empty: #2c2c2a;
+      --critical-soft: #3a1f1e;
+      --warning-soft: #3a3020;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #111110;
+    --surface-1: #1a1a19;
+    --border: #2e2e2c;
+    --grid: #262624;
+    --text-primary: #f0efec;
+    --text-secondary: #c3c2b7;
+    --text-muted: #9a998f;
+    --series-1: #3987e5;
+    --empty: #2c2c2a;
+    --critical-soft: #3a1f1e;
+    --warning-soft: #3a3020;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; overflow: hidden; }
+  body { background: var(--bg); color: var(--text-primary); font-family: 'IBM Plex Sans Thai Looped', system-ui, sans-serif; font-size: 16px; line-height: 1.45; }
+
+  /* ผืนงานขนาดคงที่ 1600×900 ย่อขยายให้พอดีจอเหมือนสไลด์ */
+  .stage { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; transform-origin: 0 0; padding: 26px 36px 30px; display: grid; grid-template-rows: auto auto minmax(0, 1fr); gap: 16px; }
+
+  header { display: flex; justify-content: space-between; align-items: flex-end; }
+  h1 { font-size: 30px; margin: 0; font-weight: 700; line-height: 1.2; }
+  .sub { color: var(--text-secondary); margin: 0; }
+  .asof { color: var(--text-muted); font-size: 15px; }
+
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; min-width: 0; min-height: 0; }
+  .kpi-label { color: var(--text-secondary); font-size: 16px; font-weight: 500; }
+  .kpi-value { font-size: 42px; font-weight: 700; line-height: 1.1; margin: 4px 0 2px; font-variant-numeric: tabular-nums; }
+  .kpi-value small { font-size: 18px; font-weight: 500; color: var(--text-secondary); margin-left: 6px; }
+  .kpi-note { color: var(--text-muted); font-size: 14px; }
+  .kpi.hero { border-left: 5px solid var(--critical); }
+  .kpi .down { color: var(--critical); font-weight: 600; }
+
+  .main { display: grid; grid-template-columns: minmax(0, 1fr) 440px; gap: 16px; min-height: 0; }
+  .card h2 { font-size: 19px; margin: 0; font-weight: 600; }
+  .card-desc { color: var(--text-muted); font-size: 14px; margin: 0 0 8px; }
+
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: 13px; font-weight: 600; color: var(--text-muted); padding: 6px 10px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  td { padding: 0 10px; height: 42px; border-bottom: 1px solid var(--grid); vertical-align: middle; font-size: 15px; }
+  tr.is-high td:first-child { box-shadow: inset 3px 0 0 var(--critical); }
+  .rank { color: var(--text-muted); font-variant-numeric: tabular-nums; width: 30px; }
+  .who b { font-weight: 600; }
+  .phone { color: var(--text-secondary); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .num.hot { font-weight: 700; color: var(--critical); }
+  .spark { display: flex; align-items: flex-end; gap: 4px; }
+  .spark div { display: flex; flex-direction: column; align-items: center; width: 22px; }
+  .spark i { display: block; width: 14px; background: var(--series-1); border-radius: 2px 2px 0 0; }
+  .spark i.zero { background: var(--empty); }
+  .spark span { font-size: 11px; color: var(--text-muted); line-height: 1.1; }
+  .badge { display: inline-flex; align-items: center; gap: 5px; font-size: 14px; font-weight: 600; padding: 2px 10px; border-radius: 999px; white-space: nowrap; }
+  .badge.high { background: var(--critical-soft); }
+  .badge.high::before { content: '▲'; color: var(--critical); font-size: 10px; }
+  .badge.medium { background: var(--warning-soft); }
+  .badge.medium::before { content: '●'; color: var(--warning); font-size: 10px; }
+  .status { font-size: 14px; color: var(--text-secondary); white-space: nowrap; }
+  .status.none { color: var(--text-primary); font-weight: 600; }
+
+  .side { display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 16px; min-height: 0; }
+  .chart svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .rules { margin: 8px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; font-size: 15px; color: var(--text-secondary); }
+  .rules b { color: var(--text-primary); }
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <header>
+    <div>
+      <h1>Member Retention</h1>
+      <p class="sub">FitZone <span id="branch"></span></p>
+    </div>
+    <div class="asof">ข้อมูล ณ <span id="asof"></span></div>
+  </header>
+
+  <section class="kpis">
+    <div class="card kpi hero">
+      <div class="kpi-label">ต้องโทรวันนี้</div>
+      <div class="kpi-value"><span id="k-call"></span><small>คน</small></div>
+      <div class="kpi-note">ความเสี่ยงสูงและยังไม่ได้ติดต่อ</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-label">สมาชิกหมดอายุภายใน 14 วัน</div>
+      <div class="kpi-value"><span id="k-exp"></span><small>คน</small></div>
+      <div class="kpi-note">จากสมาชิกที่ติดตาม <span id="k-n"></span> คน</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-label">ไม่มาเข้ายิมเกิน 14 วัน</div>
+      <div class="kpi-value"><span id="k-away"></span><small>คน</small></div>
+      <div class="kpi-note">นับจากการเช็กอินครั้งล่าสุด</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-label">อัตราต่ออายุสมาชิก ต.ค.</div>
+      <div class="kpi-value"><span id="k-rate"></span><small>%</small></div>
+      <div class="kpi-note"><span class="down" id="k-gap"></span> จากเป้า <span id="k-target"></span>%</div>
+    </div>
+  </section>
+
+  <section class="main">
+    <div class="card">
+      <h2>สมาชิกที่มีความเสี่ยง เรียงจากเสี่ยงมากไปน้อย</h2>
+      <p class="card-desc" id="list-desc"></p>
+      <table>
+        <thead>
+          <tr><th>#</th><th>ชื่อสมาชิก</th><th>เบอร์โทร</th><th>แพ็กเกจ</th><th>ไม่มาเข้ายิม</th><th>หมดอายุในอีก</th><th>เข้ายิม 4 สัปดาห์ล่าสุด (ครั้ง)</th><th>ความเสี่ยง</th><th>สถานะการติดต่อ</th></tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+
+    <div class="side">
+      <div class="card">
+        <h2>อัตราต่ออายุสมาชิก 6 เดือนล่าสุด (%)</h2>
+        <p class="card-desc">% ของสมาชิกที่หมดอายุในเดือนนั้นแล้วต่ออายุ</p>
+        <div class="chart" id="renewal"></div>
+      </div>
+      <div class="card">
+        <h2>เกณฑ์ความเสี่ยง</h2>
+        <ul class="rules">
+          <li><b>ไม่มาเข้ายิมนาน</b> มีน้ำหนักมากที่สุด</li>
+          <li><b>ใกล้หมดอายุ</b> ภายใน 60 วัน</li>
+          <li><b>เข้ายิมน้อยลง</b> เทียบสัปดาห์แรกกับสัปดาห์ล่าสุด</li>
+          <li><b>สูง</b> = คะแนน 60 ขึ้นไป · <b>ปานกลาง</b> = 40–59</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  // ข้อมูลจำลอง: สมาชิก FitZone สาขาอารีย์ (ข้อมูล ณ 30 ต.ค. 2026)
+  (function () {
+    let seed = 20261030;
+    const rnd = () => { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; };
+    const pick = (arr) => arr[Math.floor(rnd() * arr.length)];
+    const int = (a, b) => a + Math.floor(rnd() * (b - a + 1));
+
+    const firstNames = ['กมล', 'ณัฐวุฒิ', 'พิมพ์ชนก', 'ธนากร', 'ศิริพร', 'อรรถพล', 'ชนิดา', 'วรเมธ', 'ปวีณา', 'กิตติพัฒน์',
+      'สุภัสสรา', 'ภานุวัฒน์', 'จิราพร', 'ธีรวัฒน์', 'นภัสสร', 'เอกชัย', 'ณิชา', 'พงศกร', 'รัชนี', 'ศุภกร',
+      'มนัสนันท์', 'ปิยะพงษ์', 'อัญชลี', 'วีรยุทธ', 'ลลิตา', 'ชยพล', 'กัญญาณัฐ', 'ธนวัฒน์', 'พรรณี', 'สิทธิชัย'];
+    const lastInitials = ['ก.', 'จ.', 'ช.', 'ท.', 'น.', 'ป.', 'พ.', 'ม.', 'ร.', 'ว.', 'ส.', 'อ.'];
+    const packages = [
+      { code: 'M1', name: 'รายเดือน' },
+      { code: 'M3', name: '3 เดือน' },
+      { code: 'Y1', name: 'รายปี' },
+      { code: 'PT10', name: 'PT 10 ครั้ง' },
+    ];
+
+    const members = [];
+    for (let i = 0; i < 60; i++) {
+      // ให้ประมาณหนึ่งในสามเป็นกลุ่มที่ห่างหายไป
+      const fading = rnd() < 0.35;
+      const daysSinceVisit = fading ? int(12, 38) : int(0, 9);
+      const daysToExpiry = int(1, 75);
+      const base = fading ? int(2, 4) : int(2, 5);
+      const visits4w = fading
+        ? [base, Math.max(0, base - int(0, 2)), Math.max(0, base - int(1, 3)), 0]
+        : [base, int(1, 5), int(2, 5), int(1, 5)];
+      const pkg = pick(packages);
+
+      const absence = Math.min(daysSinceVisit / 30, 1);
+      const expiring = 1 - Math.min(daysToExpiry / 60, 1);
+      const drop = Math.max(0, (visits4w[0] - visits4w[3]) / 5);
+      const risk = Math.min(0.9999, absence * 0.5 + expiring * 0.3 + drop * 0.2);
+
+      members.push({
+        id: 'FZ-' + (10231 + i * 7),
+        name: pick(firstNames) + ' ' + pick(lastInitials),
+        phone: '08' + int(1, 9) + '-' + int(100, 999) + '-' + int(1000, 9999),
+        pkg,
+        age: int(19, 58),
+        gender: rnd() < 0.52 ? 'F' : 'M',
+        daysSinceVisit,
+        daysToExpiry,
+        visits4w,
+        risk,
+        level: risk >= 0.6 ? 'high' : risk >= 0.4 ? 'medium' : 'low',
+        contacted: rnd() < 0.25 ? (rnd() < 0.5 ? 'called' : 'booked') : 'none',
+      });
+    }
+
+    window.FITZONE = {
+      asOf: 'ศุกร์ 30 ต.ค. 2026 · 08:00 น.',
+      branch: 'สาขาอารีย์',
+      totalMembers: 1284,
+      members,
+      renewal: [
+        { month: 'พ.ค.', rate: 82 }, { month: 'มิ.ย.', rate: 79 }, { month: 'ก.ค.', rate: 77 },
+        { month: 'ส.ค.', rate: 74 }, { month: 'ก.ย.', rate: 73 }, { month: 'ต.ค.', rate: 71 },
+      ],
+      renewalTarget: 80,
+    };
+  })();
+</script>
+<script>
+  const D = window.FITZONE;
+  const M = D.members;
+  const $ = (id) => document.getElementById(id);
+  const ROWS = 12;
+
+  $('branch').textContent = D.branch;
+  $('asof').textContent = D.asOf;
+  $('k-call').textContent = M.filter(m => m.level === 'high' && m.contacted === 'none').length;
+  $('k-exp').textContent = M.filter(m => m.daysToExpiry <= 14).length;
+  $('k-n').textContent = M.length;
+  $('k-away').textContent = M.filter(m => m.daysSinceVisit > 14).length;
+  const rate = D.renewal[D.renewal.length - 1].rate;
+  $('k-rate').textContent = rate;
+  $('k-target').textContent = D.renewalTarget;
+  $('k-gap').textContent = '▼ ' + (D.renewalTarget - rate) + ' จุด';
+
+  const statusLabel = { none: 'ยังไม่ติดต่อ', called: 'โทรแล้ว', booked: 'นัดเข้ายิมแล้ว' };
+  const levelLabel = { high: 'สูง', medium: 'ปานกลาง' };
+  const atRisk = M.filter(m => m.level !== 'low').sort((a, b) => b.risk - a.risk);
+  $('list-desc').textContent = `${ROWS} อันดับแรก จากสมาชิกความเสี่ยงสูงและปานกลางทั้งหมด ${atRisk.length} คน`;
+
+  const spark = (v) => '<div class="spark">' + v.map(n =>
+    `<div><i class="${n === 0 ? 'zero' : ''}" style="height:${Math.max(2, n / 5 * 22)}px"></i><span>${n}</span></div>`).join('') + '</div>';
+
+  $('rows').innerHTML = atRisk.slice(0, ROWS).map((m, i) => `
+    <tr class="${m.level === 'high' ? 'is-high' : ''}">
+      <td class="rank">${i + 1}</td>
+      <td class="who"><b>${m.name}</b></td>
+      <td class="phone">${m.phone}</td>
+      <td>${m.pkg.name}</td>
+      <td class="num ${m.daysSinceVisit > 14 ? 'hot' : ''}">${m.daysSinceVisit} วัน</td>
+      <td class="num ${m.daysToExpiry <= 14 ? 'hot' : ''}">${m.daysToExpiry} วัน</td>
+      <td>${spark(m.visits4w)}</td>
+      <td><span class="badge ${m.level}">${levelLabel[m.level]}</span></td>
+      <td class="status ${m.contacted}">${statusLabel[m.contacted]}</td>
+    </tr>`).join('');
+
+  // กราฟเส้นอัตราต่ออายุ ติดตัวเลขทุกจุด
+  (function () {
+    const W = 400, H = 230, pad = { l: 40, r: 16, t: 20, b: 28 };
+    const lo = 60, hi = 90;
+    const x = (i) => pad.l + i * (W - pad.l - pad.r) / (D.renewal.length - 1);
+    const y = (v) => pad.t + (hi - v) / (hi - lo) * (H - pad.t - pad.b);
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="อัตราต่ออายุลดลงจาก 82% เหลือ 71%">`;
+    [60, 70, 80, 90].forEach(v => {
+      s += `<line x1="${pad.l}" x2="${W - pad.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)"/>`;
+      s += `<text x="${pad.l - 6}" y="${y(v) + 4}" text-anchor="end" font-size="12" fill="var(--text-muted)">${v}%</text>`;
+    });
+    s += `<line x1="${pad.l}" x2="${W - pad.r}" y1="${y(D.renewalTarget)}" y2="${y(D.renewalTarget)}" stroke="var(--critical)" stroke-width="1.5" stroke-dasharray="5 4"/>`;
+    s += `<text x="${W - pad.r}" y="${y(D.renewalTarget) + 16}" text-anchor="end" font-size="12" font-weight="600" fill="var(--critical)">เป้าหมาย ${D.renewalTarget}%</text>`;
+    s += `<polyline fill="none" stroke="var(--series-1)" stroke-width="2.5" stroke-linejoin="round" points="${D.renewal.map((d, i) => x(i) + ',' + y(d.rate)).join(' ')}"/>`;
+    D.renewal.forEach((d, i) => {
+      s += `<text x="${x(i)}" y="${H - 6}" text-anchor="middle" font-size="13" fill="var(--text-muted)">${d.month}</text>`;
+      s += `<circle cx="${x(i)}" cy="${y(d.rate)}" r="4.5" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"/>`;
+      s += `<text x="${x(i)}" y="${y(d.rate) - 12}" text-anchor="middle" font-size="13" font-weight="600" fill="var(--text-primary)">${d.rate}%</text>`;
+    });
+    $('renewal').innerHTML = s + '</svg>';
+  })();
+
+  // ย่อขยายผืนงานให้พอดีหน้าจอ
+  function fit() {
+    const st = $('stage'), s = Math.min(innerWidth / 1600, innerHeight / 900);
+    st.style.transform = `translate(${(innerWidth - 1600 * s) / 2}px, ${(innerHeight - 900 * s) / 2}px) scale(${s})`;
+  }
+  addEventListener('resize', fit);
+  fit();
+</script>
+</body>
+</html>

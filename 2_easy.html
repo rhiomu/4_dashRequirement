@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SpeedBox Delivery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;600&family=Noto+Sans+Thai+Looped:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #eef0f2;
+    --surface-1: #ffffff;
+    --side: #23262b;
+    --side-text: #f2f3f5;
+    --side-muted: #a7adb6;
+    --side-line: #363a41;
+    --border: #e1e4e8;
+    --grid: #eceef1;
+    --text-primary: #17191c;
+    --text-secondary: #4b5058;
+    --text-muted: #6d737c;
+    --empty: #f0f1f3;
+    /* ลำดับสีส้มสำหรับค่าน้อยไปมาก */
+    --seq-1: #fdebdf;
+    --seq-2: #f9c6a3;
+    --seq-3: #f1975f;
+    --seq-4: #d9622b;
+    --seq-5: #a33f17;
+    --series-1: #23262b;
+    --critical: #d03b3b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #121315;
+      --surface-1: #1b1d20;
+      --side: #0c0d0f;
+      --side-line: #24272c;
+      --border: #2b2e33;
+      --grid: #25282c;
+      --text-primary: #f1f2f4;
+      --text-secondary: #c2c6cc;
+      --text-muted: #9097a0;
+      --empty: #222428;
+      --seq-1: #3a2a20;
+      --seq-2: #6b3a1f;
+      --seq-3: #a8521f;
+      --seq-4: #dd6f2f;
+      --seq-5: #ffa066;
+      --series-1: #e8eaed;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #121315;
+    --surface-1: #1b1d20;
+    --side: #0c0d0f;
+    --side-line: #24272c;
+    --border: #2b2e33;
+    --grid: #25282c;
+    --text-primary: #f1f2f4;
+    --text-secondary: #c2c6cc;
+    --text-muted: #9097a0;
+    --empty: #222428;
+    --seq-1: #3a2a20;
+    --seq-2: #6b3a1f;
+    --seq-3: #a8521f;
+    --seq-4: #dd6f2f;
+    --seq-5: #ffa066;
+    --series-1: #e8eaed;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; overflow: hidden; }
+  body { background: var(--bg); color: var(--text-primary); font-family: 'Noto Sans Thai Looped', system-ui, sans-serif; font-size: 16px; line-height: 1.45; }
+  h1, h2, .brand { font-family: 'Kanit', 'Noto Sans Thai Looped', sans-serif; font-weight: 500; }
+
+  /* ผืนงานขนาดคงที่ 1600×900 ย่อขยายให้พอดีจอเหมือนสไลด์ */
+  .stage { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; transform-origin: 0 0; display: grid; grid-template-columns: 270px minmax(0, 1fr); background: var(--bg); }
+
+  aside { background: var(--side); color: var(--side-text); padding: 30px 26px; }
+  .brand { font-size: 26px; font-weight: 600; letter-spacing: 0.02em; }
+  .brand span { color: #f1975f; }
+  .period { color: var(--side-muted); font-size: 14px; margin: 4px 0 26px; }
+  .kpi { border-top: 1px solid var(--side-line); padding: 16px 0; }
+  .kpi .label { color: var(--side-muted); font-size: 15px; display: block; }
+  .kpi b { font-size: 36px; line-height: 1.15; font-variant-numeric: tabular-nums; font-weight: 700; }
+  .kpi b small { font-size: 16px; color: var(--side-muted); margin-left: 6px; font-weight: 400; }
+  .kpi .note { color: var(--side-muted); font-size: 14px; }
+
+  main { padding: 26px 30px 28px; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 16px; min-height: 0; }
+  .card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px; padding: 16px 22px; min-width: 0; min-height: 0; }
+  h2 { font-size: 20px; margin: 0; }
+  .desc { color: var(--text-muted); font-size: 14px; margin: 0 0 10px; }
+  .two { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px; min-height: 0; }
+
+  /* heatmap */
+  .heat { display: grid; grid-template-columns: 120px repeat(6, minmax(0, 1fr)); gap: 4px; }
+  .heat .col { font-size: 14px; color: var(--text-secondary); text-align: center; font-weight: 500; }
+  .heat .row { font-size: 16px; color: var(--text-primary); display: flex; align-items: center; }
+  .cell { height: 35px; border-radius: 6px; display: grid; place-items: center; font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text-primary); }
+  .cell.dark { color: #fff; }
+  .scale { display: flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 13px; color: var(--text-secondary); }
+  .scale i { width: 22px; height: 14px; border-radius: 3px; display: inline-block; vertical-align: -2px; margin: 0 4px 0 10px; }
+
+  .chart svg { width: 100%; height: auto; display: block; overflow: visible; }
+
+  .load { width: 100%; border-collapse: collapse; }
+  .load th { text-align: left; font-size: 13px; color: var(--text-muted); font-weight: 600; padding: 0 6px 6px; white-space: nowrap; }
+  .load th.r, .load td.r { text-align: right; }
+  .load td { padding: 2px 6px; font-size: 15px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .load .track { height: 14px; background: var(--empty); border-radius: 0 4px 4px 0; position: relative; width: 100%; min-width: 150px; }
+  .load .fill { height: 100%; background: var(--seq-2); border-radius: 0 4px 4px 0; }
+  .load .fill.over { background: var(--seq-4); }
+  .load .limit { position: absolute; top: -4px; bottom: -4px; border-left: 2px dashed var(--text-secondary); }
+  .load td.over { font-weight: 700; color: var(--critical); }
+  .key { font-size: 13px; color: var(--text-secondary); margin-top: 6px; }
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <aside>
+    <div class="brand">Speed<span>Box</span></div>
+    <div class="period" id="period"></div>
+    <div class="kpi"><span class="label">พัสดุทั้งหมด</span><b id="k-total"></b><b><small>ชิ้น</small></b></div>
+    <div class="kpi"><span class="label">ส่งตรงเวลา</span><b id="k-ontime"></b><div class="note">เป้าหมาย <span id="k-target"></span>%</div></div>
+    <div class="kpi"><span class="label">ส่งช้ากว่ากำหนด</span><b id="k-late"></b><b><small>ชิ้น</small></b></div>
+    <div class="kpi"><span class="label">คนขับทั้งหมด</span><b id="k-drivers"></b><b><small>คน</small></b></div>
+  </aside>
+
+  <main>
+    <section class="card">
+      <h2>% พัสดุที่ส่งช้ากว่ากำหนด แยกตามเขตและช่วงเวลานัดส่ง</h2>
+      <p class="desc">รวม 7 วัน · ตัวเลขในช่อง = % ของพัสดุในช่องนั้นที่ส่งช้า</p>
+      <div class="heat" id="heat"></div>
+      <div class="scale" id="scale"></div>
+    </section>
+
+    <div class="two">
+      <section class="card">
+        <h2>% ส่งตรงเวลา รายวัน</h2>
+        <p class="desc">14 วันล่าสุด · แกนนอน = วันที่ (ต.ค. 2026) · หน่วย % ส่งตรงเวลา</p>
+        <div class="chart" id="trend"></div>
+      </section>
+      <section class="card">
+        <h2>พัสดุต่อคนขับ ช่วง 17:00–21:00</h2>
+        <p class="desc">เฉลี่ยต่อวัน แยกตามเขต</p>
+        <table class="load">
+          <thead><tr><th>เขต</th><th class="r">คนขับ</th><th>ชิ้นต่อคนขับต่อรอบ</th><th class="r"></th></tr></thead>
+          <tbody id="load"></tbody>
+        </table>
+        <div class="key">เส้นประ = มาตรฐาน 45 ชิ้นต่อคนต่อรอบ · สีเข้มและตัวเลขสีแดง = เกินมาตรฐาน</div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script>
+  // ข้อมูลจำลอง: บริษัทขนส่งพัสดุ SpeedBox กรุงเทพฯ (24–30 ต.ค. 2026)
+  const DATA = {
+    period: '7 วันล่าสุด · 24–30 ต.ค. 2026',
+    target: 95,
+    slots: ['09:00–11:00', '11:00–13:00', '13:00–15:00', '15:00–17:00', '17:00–19:00', '19:00–21:00'],
+    slotShare: [0.12, 0.16, 0.18, 0.2, 0.2, 0.14],
+    zones: [
+      { name: 'ปทุมวัน', daily: 900, late: [4, 5, 5, 6, 8, 7], eveningDrivers: 4 },
+      { name: 'บางรัก', daily: 820, late: [5, 5, 6, 7, 9, 8], eveningDrivers: 4 },
+      { name: 'สาทร', daily: 860, late: [4, 6, 5, 7, 8, 9], eveningDrivers: 4 },
+      { name: 'จตุจักร', daily: 780, late: [5, 4, 6, 6, 9, 8], eveningDrivers: 4 },
+      { name: 'ห้วยขวาง', daily: 640, late: [4, 5, 5, 6, 8, 7], eveningDrivers: 3 },
+      { name: 'บางกะปิ', daily: 520, late: [5, 6, 6, 9, 12, 15], eveningDrivers: 2 },
+      { name: 'บางนา', daily: 380, late: [6, 7, 9, 18, 38, 46], eveningDrivers: 1 },
+      { name: 'ลาดกระบัง', daily: 300, late: [7, 8, 10, 22, 44, 52], eveningDrivers: 1 },
+    ],
+    totalDrivers: 96,
+    onTimeTrend: [94.6, 94.2, 94.8, 93.9, 93.5, 93.8, 93.1, 92.0, 91.6, 91.8, 91.0, 91.2, 90.6, 90.7],
+    trendLabels: ['17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30'],
+    loadLimit: 45,
+  };
+
+  const $ = (id) => document.getElementById(id);
+  const fmt = (n) => Math.round(n).toLocaleString();
+  const Z = DATA.zones;
+  Z.forEach(z => {
+    z.vol = DATA.slotShare.map(s => z.daily * 7 * s);
+    z.lateN = z.vol.map((v, i) => v * z.late[i] / 100);
+    // พัสดุต่อคนขับช่วงเย็น = ปริมาณ 2 รอบเย็นต่อวัน ÷ คนขับ ÷ 2 รอบ
+    z.load = z.daily * (DATA.slotShare[4] + DATA.slotShare[5]) / z.eveningDrivers / 2;
+  });
+  const total = Z.reduce((s, z) => s + z.daily * 7, 0);
+  const late = Z.reduce((s, z) => s + z.lateN.reduce((a, b) => a + b, 0), 0);
+
+  $('period').textContent = DATA.period;
+  $('k-total').textContent = fmt(total);
+  $('k-ontime').textContent = ((1 - late / total) * 100).toFixed(1) + '%';
+  $('k-target').textContent = DATA.target;
+  $('k-late').textContent = fmt(late);
+  $('k-drivers').textContent = DATA.totalDrivers;
+
+  // heatmap: สีส้มเข้มขึ้นตาม % ที่ส่งช้า
+  const step = (p) => p < 10 ? 1 : p < 20 ? 2 : p < 30 ? 3 : p < 40 ? 4 : 5;
+  let h = '<div></div>' + DATA.slots.map(s => `<div class="col">${s} น.</div>`).join('');
+  Z.forEach(z => {
+    h += `<div class="row">${z.name}</div>`;
+    z.late.forEach(p => {
+      const k = step(p);
+      h += `<div class="cell ${k >= 4 ? 'dark' : ''}" style="background:var(--seq-${k})">${p}%</div>`;
+    });
+  });
+  $('heat').innerHTML = h;
+  $('scale').innerHTML = 'ระดับสี:' + ['ต่ำกว่า 10%', '10–19%', '20–29%', '30–39%', '40% ขึ้นไป']
+    .map((l, i) => `<span><i style="background:var(--seq-${i + 1})"></i>${l}</span>`).join('');
+
+  // พัสดุต่อคนขับช่วงเย็น
+  const maxLoad = 80;
+  $('load').innerHTML = Z.map(z => {
+    const over = z.load > DATA.loadLimit;
+    return `<tr>
+      <td>${z.name}</td>
+      <td class="r">${z.eveningDrivers} คน</td>
+      <td><div class="track"><div class="fill ${over ? 'over' : ''}" style="width:${Math.min(z.load / maxLoad, 1) * 100}%"></div><div class="limit" style="left:${DATA.loadLimit / maxLoad * 100}%"></div></div></td>
+      <td class="r ${over ? 'over' : ''}">${Math.round(z.load)} ชิ้น</td>
+    </tr>`;
+  }).join('');
+
+  // กราฟเส้น % ส่งตรงเวลา ติดตัวเลขทุกวัน
+  (function () {
+    const T = DATA.onTimeTrend, W = 720, H = 236, pad = { l: 44, r: 14, t: 24, b: 26 };
+    const lo = 88, hi = 96;
+    const x = (i) => pad.l + i * (W - pad.l - pad.r) / (T.length - 1);
+    const y = (v) => pad.t + (hi - v) / (hi - lo) * (H - pad.t - pad.b);
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="% ส่งตรงเวลาลดลงจาก 94.6 เป็น 90.7">`;
+    [88, 90, 92, 94, 96].forEach(v => {
+      s += `<line x1="${pad.l}" x2="${W - pad.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)"/>`;
+      s += `<text x="${pad.l - 6}" y="${y(v) + 4}" text-anchor="end" font-size="13" fill="var(--text-muted)">${v}%</text>`;
+    });
+    s += `<line x1="${pad.l}" x2="${W - pad.r}" y1="${y(DATA.target)}" y2="${y(DATA.target)}" stroke="var(--critical)" stroke-width="1.5" stroke-dasharray="5 4"/>`;
+    s += `<text x="${W - pad.r}" y="${y(DATA.target) - 6}" text-anchor="end" font-size="13" font-weight="600" fill="var(--critical)">เป้าหมาย ${DATA.target}%</text>`;
+    s += `<polyline fill="none" stroke="var(--series-1)" stroke-width="2.5" stroke-linejoin="round" points="${T.map((v, i) => x(i) + ',' + y(v)).join(' ')}"/>`;
+    T.forEach((v, i) => {
+      s += `<text x="${x(i)}" y="${H - 8}" text-anchor="middle" font-size="13" fill="var(--text-muted)">${DATA.trendLabels[i]}</text>`;
+      s += `<circle cx="${x(i)}" cy="${y(v)}" r="4" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"/>`;
+      s += `<text x="${x(i)}" y="${y(v) + (i % 2 ? 20 : -10)}" text-anchor="middle" font-size="12" font-weight="600" fill="var(--text-primary)">${v.toFixed(1)}</text>`;
+    });
+        $('trend').innerHTML = s + '</svg>';
+  })();
+
+  // ย่อขยายผืนงานให้พอดีหน้าจอ
+  function fit() {
+    const st = $('stage'), s = Math.min(innerWidth / 1600, innerHeight / 900);
+    st.style.transform = `translate(${(innerWidth - 1600 * s) / 2}px, ${(innerHeight - 900 * s) / 2}px) scale(${s})`;
+  }
+  addEventListener('resize', fit);
+  fit();
+</script>
+</body>
+</html>

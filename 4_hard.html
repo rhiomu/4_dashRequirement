@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FreshMart Weekly Highlight</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Itim&display=swap" rel="stylesheet">
+<!-- ตั้งใจออกแบบให้อ่านยาก: ใช้สำหรับกิจกรรมในห้องเรียน -->
+<style>
+  body { margin: 0; background: linear-gradient(160deg, #fff1f8, #fffbe6 60%, #e9fbff); font-family: 'Itim', sans-serif; color: #5b3a6b; font-size: 14px; }
+  .hero { background: linear-gradient(90deg, #ff5fa2, #ffb03b); color: #fff; text-align: center; padding: 18px 12px; }
+  .hero h1 { margin: 0; font-size: 30px; letter-spacing: 1px; text-shadow: 2px 2px 0 rgba(0,0,0,.15); }
+  .hero p { margin: 4px 0 0; opacity: .9; }
+  .badges { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; padding: 16px 12px 4px; }
+  .badge { background: #fff; border-radius: 20px; padding: 10px 20px; box-shadow: 0 4px 0 #ffd1e6; text-align: center; min-width: 150px; }
+  .badge b { display: block; font-size: 26px; color: #ff3d8b; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; padding: 16px; max-width: 1300px; margin: 0 auto; }
+  .card { background: #fff; border-radius: 22px; padding: 14px 16px; box-shadow: 0 6px 0 #ffe3a3; min-width: 0; }
+  .card h2 { margin: 0 0 8px; font-size: 20px; color: #ff3d8b; font-weight: normal; }
+  .bars { display: grid; gap: 4px; }
+  .bar { display: grid; grid-template-columns: 120px 1fr; gap: 6px; align-items: center; font-size: 12px; }
+  .bar i { display: block; height: 14px; border-radius: 10px; }
+  .vbars { display: flex; align-items: flex-end; gap: 4px; height: 190px; padding-top: 10px; }
+  .vbars div { flex: 1; border-radius: 8px 8px 0 0; position: relative; }
+  .vbars span { position: absolute; bottom: -54px; left: 50%; transform: translateX(-50%) rotate(-60deg); transform-origin: center; font-size: 9px; white-space: nowrap; color: #a07ab0; }
+  .vwrap { padding-bottom: 60px; }
+  .cloud { text-align: center; line-height: 1.1; padding: 8px; }
+  .cloud span { display: inline-block; margin: 2px 6px; }
+  svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+  .foot { text-align: center; font-size: 9px; color: #c9b3d3; padding: 0 12px 16px; }
+</style>
+</head>
+<body>
+<div class="hero">
+  <h1>🎉 FRESH ZONE WEEKLY HIGHLIGHT 🎉</h1>
+  <p>สาขาพระราม 9 · เดือนตุลาคม 2026 · เราทำได้ดีมาก! 💪</p>
+</div>
+<div class="badges">
+  <div class="badge"><b>+12% 🚀</b>ยอดขายของสด</div>
+  <div class="badge"><b>18,420</b>ลูกค้าต่อสัปดาห์</div>
+  <div class="badge"><b>฿486</b>ตะกร้าเฉลี่ย</div>
+  <div class="badge"><b>4.8 ⭐</b>ความพึงพอใจ</div>
+</div>
+
+<div class="grid">
+  <div class="card"><h2>🏆 TOP SELLERS (ชิ้น/วัน)</h2><div class="bars" id="top"></div></div>
+  <div class="card"><h2>📦 ORDER PLAN ก–ฮ</h2><div class="vwrap"><div class="vbars" id="order"></div></div></div>
+  <div class="card"><h2>💖 สินค้ายอดนิยม</h2><div class="cloud" id="cloud"></div></div>
+  <div class="card"><h2>🥗 รายได้ตามหมวด</h2><div id="donut"></div></div>
+</div>
+<div class="foot">* ยอดสั่งและยอดขายเป็นค่าเฉลี่ยต่อวัน 3–30 ต.ค. 2026 · หน่วยตามสินค้า · รายงาน shrink ดูแยกในระบบหลังร้าน</div>
+
+<script>
+  // ข้อมูลชุดเดียวกับ 4_easy.html
+  const P = [
+    ['ขนมปังโฮลวีท', 'เบเกอรี่', 120, 64, 42], ['สลัดผักพร้อมทาน', 'ผัก', 90, 41, 55],
+    ['สตรอว์เบอร์รีเกาหลี', 'ผลไม้', 60, 31, 95], ['อกไก่สด', 'เนื้อสัตว์', 80, 61, 85],
+    ['ครัวซองต์เนยสด', 'เบเกอรี่', 150, 118, 22], ['แซลมอนสไลซ์', 'เนื้อสัตว์', 40, 34, 160],
+    ['นมสดพาสเจอร์ไรส์ 2 ลิตร', 'นม', 110, 101, 78], ['ผักบุ้ง', 'ผัก', 140, 118, 12],
+    ['หมูสับ', 'เนื้อสัตว์', 70, 66, 110], ['กล้วยหอม', 'ผลไม้', 85, 79, 35],
+    ['โยเกิร์ตรสธรรมชาติ', 'นม', 200, 192, 14], ['มะเขือเทศเชอร์รี', 'ผัก', 75, 70, 30],
+    ['ไข่ไก่ เบอร์ 2 (10 ฟอง)', 'นม', 160, 156, 48], ['แอปเปิลฟูจิ', 'ผลไม้', 65, 63, 65],
+  ].map(([name, cat, order, sold, cost]) => ({ name, cat, order, sold, cost, rev: sold * cost * 1.35 }));
+  const candy = ['#ff5fa2', '#ffb03b', '#3bd5ff', '#8f6bff', '#4cd97b', '#ff7a59', '#f9d423', '#00c2a8', '#ff9ff3', '#54a0ff', '#feca57', '#c56cf0', '#1dd1a1', '#ff6b6b'];
+
+  // ยอดขาย เรียงจากมากไปน้อย สีหนึ่งชุด
+  const bySold = [...P].sort((a, b) => b.sold - a.sold);
+  const maxSold = bySold[0].sold;
+  document.getElementById('top').innerHTML = bySold.map((p, i) =>
+    `<div class="bar"><span>${i < 3 ? ['🥇', '🥈', '🥉'][i] : ''}${p.name}</span><i style="width:${p.sold / maxSold * 100}%;background:${candy[i]}" title="${p.sold}"></i></div>`).join('');
+
+  // ยอดสั่ง เรียงตามตัวอักษร สีอีกชุด ทำให้จับคู่กับกราฟยอดขายไม่ได้
+  const ord = [...P].sort((a, b) => a.name.localeCompare(b.name, 'th'));
+  const maxOrd = Math.max(...ord.map(p => p.order));
+  document.getElementById('order').innerHTML = ord.map((p, i) =>
+    `<div style="height:${p.order / maxOrd * 100}%;background:${candy[(i * 5 + 3) % candy.length]}" title="${p.order}"><span>${p.name}</span></div>`).join('');
+
+  // คลาวด์คำตามรายได้
+  const maxRev = Math.max(...P.map(p => p.rev));
+  document.getElementById('cloud').innerHTML = [...P].sort(() => 0.5 - Math.sin(P.length)).map((p, i) =>
+    `<span style="font-size:${12 + p.rev / maxRev * 30}px;color:${candy[(i * 3) % candy.length]}">${p.name}</span>`).join('');
+
+  // โดนัทรายได้ตามหมวด
+  (function () {
+    const cats = {};
+    P.forEach(p => cats[p.cat] = (cats[p.cat] || 0) + p.rev);
+    const e = Object.entries(cats), tot = e.reduce((s, [, v]) => s + v, 0);
+    let a = -Math.PI / 2, s = '<svg width="260" height="200" viewBox="0 0 260 200">';
+    e.forEach(([k, v], i) => {
+      const b = a + v / tot * Math.PI * 2, large = b - a > Math.PI ? 1 : 0;
+      s += `<path d="M100 100 L${100 + 80 * Math.cos(a)} ${100 + 80 * Math.sin(a)} A80 80 0 ${large} 1 ${100 + 80 * Math.cos(b)} ${100 + 80 * Math.sin(b)} Z" fill="${candy[i]}"/>`;
+      s += `<circle cx="200" cy="${40 + i * 24}" r="7" fill="${candy[i]}"/><text x="212" y="${45 + i * 24}" font-size="13" fill="#5b3a6b">${k}</text>`;
+      a = b;
+    });
+    s += '<circle cx="100" cy="100" r="42" fill="#fff"/><text x="100" y="106" text-anchor="middle" font-size="18" fill="#ff3d8b">💰</text></svg>';
+    document.getElementById('donut').innerHTML = s;
+  })();
+</script>
+</body>
+</html>
