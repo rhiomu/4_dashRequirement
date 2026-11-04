@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FreshMart Fresh Zone</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@500&family=IBM+Plex+Sans+Thai+Looped:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #f2f6f5;
+    --surface-1: #ffffff;
+    --band: #0f4d45;
+    --band-text: #ffffff;
+    --band-muted: #bfe3db;
+    --ink: #0f2a2e;
+    --border: #dbe5e3;
+    --grid: #e8efee;
+    --track: #eef3f2;
+    --text-primary: #0f2a2e;
+    --text-secondary: #42575a;
+    --text-muted: #6b8184;
+    --sold: #1b8f6a;
+    --left: #e34948;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #0f1514;
+      --surface-1: #172120;
+      --band: #0b332e;
+      --ink: #e8f1ef;
+      --border: #263533;
+      --grid: #22302e;
+      --track: #22302e;
+      --text-primary: #e8f1ef;
+      --text-secondary: #b9c9c6;
+      --text-muted: #8ea2a3;
+      --sold: #2fb488;
+      --left: #e66767;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #0f1514;
+    --surface-1: #172120;
+    --band: #0b332e;
+    --ink: #e8f1ef;
+    --border: #263533;
+    --grid: #22302e;
+    --track: #22302e;
+    --text-primary: #e8f1ef;
+    --text-secondary: #b9c9c6;
+    --text-muted: #8ea2a3;
+    --sold: #2fb488;
+    --left: #e66767;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; overflow: hidden; }
+  body { background: var(--bg); color: var(--text-primary); font-family: 'IBM Plex Sans Thai Looped', system-ui, sans-serif; font-size: 16px; line-height: 1.4; }
+  h1 { font-family: 'Mitr', sans-serif; font-weight: 500; }
+
+  /* ผืนงานขนาดคงที่ 1600×900 ย่อขยายให้พอดีจอเหมือนสไลด์ */
+  .stage { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; transform-origin: 0 0; display: grid; grid-template-rows: auto minmax(0, 1fr); background: var(--bg); }
+
+  .band { background: var(--band); color: var(--band-text); padding: 22px 36px; display: flex; justify-content: space-between; align-items: center; gap: 24px; }
+  .band .eyebrow { color: var(--band-muted); font-size: 15px; }
+  .band h1 { font-size: 32px; margin: 0; line-height: 1.2; }
+  .stats { display: flex; gap: 12px; }
+  .stat { background: rgba(255,255,255,0.12); border-radius: 12px; padding: 10px 20px; min-width: 200px; }
+  .stat b { display: block; font-size: 30px; font-weight: 700; line-height: 1.15; font-variant-numeric: tabular-nums; }
+  .stat b small { font-size: 16px; font-weight: 500; margin-left: 4px; }
+  .stat > span { color: var(--band-muted); font-size: 14px; }
+
+  main { padding: 20px 36px 26px; display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr); gap: 16px; min-height: 0; }
+  .card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px; padding: 16px 22px; min-width: 0; min-height: 0; }
+  .card-head { margin-bottom: 4px; }
+  .card-head .chips { margin-bottom: 10px; }
+  .adj { text-align: right; font-size: 15px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .adj.old { color: var(--left); font-weight: 700; }
+  h2 { font-size: 20px; margin: 0; font-weight: 600; }
+  .desc { color: var(--text-muted); font-size: 14px; margin: 0 0 10px; }
+
+  .chips { display: flex; gap: 6px; }
+  .chip { border: 1px solid var(--border); background: transparent; color: var(--text-secondary); border-radius: 8px; padding: 3px 14px; font: inherit; font-size: 14px; cursor: pointer; }
+  .chip[aria-pressed="true"] { background: var(--ink); color: var(--surface-1); border-color: var(--ink); }
+
+  /* สินค้า: แท่งเดียวต่อสินค้า ความยาวทั้งแท่ง = ยอดสั่งเข้า */
+  .item { display: grid; grid-template-columns: 230px minmax(0, 1fr) 84px 120px 120px; gap: 14px; align-items: center; height: 62px; border-bottom: 1px solid var(--grid); }
+  .item .p b { font-weight: 600; font-size: 16px; }
+  .split { display: flex; height: 24px; gap: 2px; }
+  .split i { display: flex; align-items: center; height: 100%; font-style: normal; font-size: 13px; font-weight: 600; color: #fff; padding: 0 10px; white-space: nowrap; overflow: hidden; }
+  .split .s { background: var(--sold); border-radius: 4px 0 0 4px; opacity: 0.55; }
+  .split .l { background: var(--track); border-radius: 0 4px 4px 0; }
+  .item.hot .split .s { opacity: 1; }
+  .item.hot .split .l { background: var(--left); }
+  .pct { text-align: right; font-weight: 700; font-size: 17px; font-variant-numeric: tabular-nums; }
+  .item.hot .pct { color: var(--left); }
+  .qty { text-align: right; font-size: 15px; color: var(--text-secondary); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .list-head { display: grid; grid-template-columns: 230px minmax(0, 1fr) 84px 120px 120px; gap: 14px; font-size: 13px; color: var(--text-muted); font-weight: 600; padding-bottom: 6px; border-bottom: 1px solid var(--border); margin-bottom: 4px; }
+  .list-head .r { text-align: right; }
+  .key { font-size: 14px; color: var(--text-secondary); margin-top: 8px; }
+
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: 14px; font-weight: 600; color: var(--text-muted); padding: 0 8px 6px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  th.r, td.r { text-align: right; }
+  td { padding: 0 8px; height: 33px; border-bottom: 1px solid var(--grid); font-size: 16px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  td.old { color: var(--left); font-weight: 700; }
+  .chart svg { width: 100%; height: auto; display: block; overflow: visible; }
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <section class="band">
+    <div>
+      <div class="eyebrow">FreshMart สาขาพระราม 9 · เฉลี่ย 4 สัปดาห์ล่าสุด (3–30 ต.ค. 2026)</div>
+      <h1>แผนกของสด</h1>
+    </div>
+    <div class="stats">
+      <div class="stat"><b><span id="s-order"></span><small>บาท</small></b><span>มูลค่าสั่งเข้าต่อสัปดาห์</span></div>
+      <div class="stat"><b><span id="s-left"></span><small>บาท</small></b><span>มูลค่าที่ขายไม่ออกต่อสัปดาห์</span></div>
+      <div class="stat"><b><span id="s-pct"></span><small>%</small></b><span>ของมูลค่าสั่งเข้า</span></div>
+    </div>
+  </section>
+
+  <main>
+    <section class="card">
+      <div class="card-head">
+        <div>
+          <h2>ยอดสั่งเข้าเทียบยอดขาย รายสินค้า</h2>
+          <p class="desc">ความยาวทั้งแท่ง = ยอดสั่งเข้า (100%) · ส่วนทางขวา = ขายไม่ออก · สีแดง = ขายไม่ออกเกิน 30% หรือไม่ได้ปรับยอดสั่งเกิน 4 สัปดาห์</p>
+        </div>
+        <div class="chips" role="group" aria-label="หมวดสินค้า" id="chips"></div>
+      </div>
+      <div class="list-head"><span>สินค้า</span><span>ขายได้ / ขายไม่ออก</span><span class="r">ขายไม่ออก</span><span class="r">ขาย / สั่ง ต่อวัน</span><span class="r">ปรับยอดสั่งล่าสุด</span></div>
+      <div id="list"></div>
+    </section>
+
+      <section class="card">
+        <h2>มูลค่าที่ขายไม่ออก รายสัปดาห์ (บาท)</h2>
+        <p class="desc">8 สัปดาห์ล่าสุด · ป้ายใต้แท่ง = วันเริ่มสัปดาห์</p>
+        <div class="chart" id="weekly"></div>
+      </section>
+  </main>
+</div>
+
+<script>
+  // ข้อมูลจำลอง: แผนกของสด FreshMart สาขาพระราม 9 (3–30 ต.ค. 2026)
+  // order/sold = จำนวนเฉลี่ยต่อวัน, cost = ต้นทุนต่อหน่วย (บาท), adjusted = ปรับยอดสั่งล่าสุดกี่สัปดาห์ก่อน
+  const PRODUCTS = [
+    { name: 'สลัดผักพร้อมทาน', cat: 'ผัก', unit: 'กล่อง', order: 90, sold: 41, cost: 55, adjusted: 10 },
+    { name: 'สตรอว์เบอร์รีเกาหลี', cat: 'ผลไม้', unit: 'แพ็ก', order: 60, sold: 31, cost: 95, adjusted: 9 },
+    { name: 'ขนมปังโฮลวีท', cat: 'เบเกอรี่', unit: 'แถว', order: 120, sold: 64, cost: 42, adjusted: 12 },
+    { name: 'อกไก่สด', cat: 'เนื้อสัตว์', unit: 'กก.', order: 80, sold: 61, cost: 85, adjusted: 1 },
+    { name: 'ครัวซองต์เนยสด', cat: 'เบเกอรี่', unit: 'ชิ้น', order: 150, sold: 118, cost: 22, adjusted: 2 },
+    { name: 'นมสดพาสเจอร์ไรส์ 2 ลิตร', cat: 'นม', unit: 'ขวด', order: 110, sold: 101, cost: 78, adjusted: 1 },
+    { name: 'กล้วยหอม', cat: 'ผลไม้', unit: 'หวี', order: 85, sold: 79, cost: 35, adjusted: 1 },
+    { name: 'ไข่ไก่ เบอร์ 2 (10 ฟอง)', cat: 'นม', unit: 'แพ็ก', order: 160, sold: 156, cost: 48, adjusted: 1 },
+  ];
+  const WEEKLY = [
+    { w: '8 ก.ย.', v: 61200 }, { w: '15 ก.ย.', v: 63800 }, { w: '22 ก.ย.', v: 66500 }, { w: '29 ก.ย.', v: 69900 },
+    { w: '6 ต.ค.', v: 74100 }, { w: '13 ต.ค.', v: 77300 }, { w: '20 ต.ค.', v: 80200 }, { w: '27 ต.ค.', v: 82600 },
+  ];
+  const LIMIT = { unsold: 30, weeks: 4 };
+
+  const $ = (id) => document.getElementById(id);
+  const fmt = (n) => Math.round(n).toLocaleString();
+  PRODUCTS.forEach(p => {
+    p.unsoldPct = (p.order - p.sold) / p.order * 100;
+    p.leftBaht = (p.order - p.sold) * 7 * p.cost;
+    p.orderBaht = p.order * 7 * p.cost;
+  });
+  const sum = (f) => PRODUCTS.reduce((s, p) => s + f(p), 0);
+  const totalOrder = sum(p => p.orderBaht), totalLeft = sum(p => p.leftBaht);
+  $('s-order').textContent = fmt(totalOrder);
+  $('s-left').textContent = fmt(totalLeft);
+  $('s-pct').textContent = (totalLeft / totalOrder * 100).toFixed(1);
+
+  const cats = [...new Set(PRODUCTS.map(p => p.cat))];
+  let cat = 'ทั้งหมด';
+  $('chips').innerHTML = ['ทั้งหมด', ...cats].map(c => `<button class="chip" aria-pressed="${c === cat}" data-cat="${c}">${c}</button>`).join('');
+  $('chips').addEventListener('click', (e) => {
+    const b = e.target.closest('.chip'); if (!b) return;
+    cat = b.dataset.cat;
+    document.querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', x === b));
+    renderList();
+  });
+
+  function renderList() {
+    $('list').innerHTML = PRODUCTS.filter(p => cat === 'ทั้งหมด' || p.cat === cat).map(p => {
+      const sp = 100 - p.unsoldPct;
+      return `<div class="item ${p.unsoldPct > LIMIT.unsold ? 'hot' : ''}">
+        <div class="p"><b>${p.name}</b></div>
+        <div class="split"><i class="s" style="width:${sp}%">ขายได้ ${Math.round(sp)}%</i><i class="l" style="width:${p.unsoldPct}%"></i></div>
+        <div class="pct">${Math.round(p.unsoldPct)}%</div>
+        <div class="qty">${p.sold} / ${p.order} ${p.unit}</div>
+        <div class="adj ${p.adjusted > LIMIT.weeks ? 'old' : ''}">${p.adjusted} สัปดาห์ก่อน</div>
+      </div>`;
+    }).join('');
+  }
+  renderList();
+
+
+  // กราฟแท่งรายสัปดาห์ ติดตัวเลขทุกแท่ง
+  (function () {
+    const W = 520, H = 560, pad = { l: 8, r: 8, t: 26, b: 28 }, max = 100000;
+    const bw = (W - pad.l - pad.r) / WEEKLY.length;
+    const y = (v) => pad.t + (1 - v / max) * (H - pad.t - pad.b);
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="มูลค่าที่ขายไม่ออกเพิ่มจาก 61,200 เป็น 82,600 บาทต่อสัปดาห์">`;
+    s += `<line x1="${pad.l}" x2="${W - pad.r}" y1="${y(0)}" y2="${y(0)}" stroke="var(--border)"/>`;
+    WEEKLY.forEach((d, i) => {
+      const x = pad.l + i * bw + 8, w = bw - 16;
+      s += `<path d="M${x} ${y(0)} V${y(d.v) + 4} q0 -4 4 -4 H${x + w - 4} q4 0 4 4 V${y(0)} Z" fill="var(--left)"/>`;
+      s += `<text x="${x + w / 2}" y="${y(d.v) - 8}" text-anchor="middle" font-size="15" font-weight="700" fill="var(--text-primary)">${fmt(d.v)}</text>`;
+      s += `<text x="${x + w / 2}" y="${H - 6}" text-anchor="middle" font-size="14" fill="var(--text-secondary)">${d.w}</text>`;
+    });
+    $('weekly').innerHTML = s + '</svg>';
+  })();
+
+  // ย่อขยายผืนงานให้พอดีหน้าจอ
+  function fit() {
+    const st = $('stage'), s = Math.min(innerWidth / 1600, innerHeight / 900);
+    st.style.transform = `translate(${(innerWidth - 1600 * s) / 2}px, ${(innerHeight - 900 * s) / 2}px) scale(${s})`;
+  }
+  addEventListener('resize', fit);
+  fit();
+</script>
+</body>
+</html>

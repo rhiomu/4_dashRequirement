@@ -275,17 +275,17 @@
 
   // กราฟเส้นอัตราต่ออายุ ติดตัวเลขทุกจุด
   (function () {
-    const W = 400, H = 230, pad = { l: 40, r: 16, t: 20, b: 28 };
-    const lo = 60, hi = 90;
+    const W = 420, H = 240, pad = { l: 40, r: 92, t: 20, b: 28 };
+    const lo = 0, hi = 100;
     const x = (i) => pad.l + i * (W - pad.l - pad.r) / (D.renewal.length - 1);
     const y = (v) => pad.t + (hi - v) / (hi - lo) * (H - pad.t - pad.b);
     let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="อัตราต่ออายุลดลงจาก 82% เหลือ 71%">`;
-    [60, 70, 80, 90].forEach(v => {
+    [0, 25, 50, 75, 100].forEach(v => {
       s += `<line x1="${pad.l}" x2="${W - pad.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)"/>`;
       s += `<text x="${pad.l - 6}" y="${y(v) + 4}" text-anchor="end" font-size="12" fill="var(--text-muted)">${v}%</text>`;
     });
     s += `<line x1="${pad.l}" x2="${W - pad.r}" y1="${y(D.renewalTarget)}" y2="${y(D.renewalTarget)}" stroke="var(--critical)" stroke-width="1.5" stroke-dasharray="5 4"/>`;
-    s += `<text x="${W - pad.r}" y="${y(D.renewalTarget) + 16}" text-anchor="end" font-size="12" font-weight="600" fill="var(--critical)">เป้าหมาย ${D.renewalTarget}%</text>`;
+    s += `<text x="${W - pad.r + 8}" y="${y(D.renewalTarget) + 4}" text-anchor="start" font-size="12" font-weight="600" fill="var(--critical)">เป้าหมาย ${D.renewalTarget}%</text>`;
     s += `<polyline fill="none" stroke="var(--series-1)" stroke-width="2.5" stroke-linejoin="round" points="${D.renewal.map((d, i) => x(i) + ',' + y(d.rate)).join(' ')}"/>`;
     D.renewal.forEach((d, i) => {
       s += `<text x="${x(i)}" y="${H - 6}" text-anchor="middle" font-size="13" fill="var(--text-muted)">${d.month}</text>`;

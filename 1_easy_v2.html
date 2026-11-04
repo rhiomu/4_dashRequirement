@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Member Retention</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai+Looped:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #f4f4f2;
+    --surface-1: #fcfcfb;
+    --band: #1f4f8f;
+    --band-text: #ffffff;
+    --band-muted: #cfe0f7;
+    --border: #e4e3df;
+    --grid: #ecebe7;
+    --track: #ecebe7;
+    --text-primary: #0b0b0b;
+    --text-secondary: #4a4946;
+    --text-muted: #6f6e69;
+    --series-1: #2a78d6;
+    --series-1-soft: #c4dbf6;
+    --critical: #d03b3b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #111110;
+      --surface-1: #1a1a19;
+      --band: #163a69;
+      --band-muted: #b6cdee;
+      --border: #2e2e2c;
+      --grid: #262624;
+      --track: #2c2c2a;
+      --text-primary: #f0efec;
+      --text-secondary: #c3c2b7;
+      --text-muted: #9a998f;
+      --series-1: #3987e5;
+      --series-1-soft: #1f3550;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #111110;
+    --surface-1: #1a1a19;
+    --band: #163a69;
+    --band-muted: #b6cdee;
+    --border: #2e2e2c;
+    --grid: #262624;
+    --track: #2c2c2a;
+    --text-primary: #f0efec;
+    --text-secondary: #c3c2b7;
+    --text-muted: #9a998f;
+    --series-1: #3987e5;
+    --series-1-soft: #1f3550;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; overflow: hidden; }
+  body { background: var(--bg); color: var(--text-primary); font-family: 'IBM Plex Sans Thai Looped', system-ui, sans-serif; font-size: 16px; line-height: 1.4; }
+
+  /* ผืนงานขนาดคงที่ 1600×900 ย่อขยายให้พอดีจอเหมือนสไลด์ */
+  .stage { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; transform-origin: 0 0; display: grid; grid-template-rows: auto minmax(0, 1fr); background: var(--bg); }
+
+  .band { background: var(--band); color: var(--band-text); padding: 22px 36px; display: flex; justify-content: space-between; align-items: center; gap: 24px; }
+  .band .eyebrow { color: var(--band-muted); font-size: 15px; }
+  .band h1 { font-size: 32px; margin: 0; font-weight: 700; line-height: 1.2; }
+  .stats { display: flex; gap: 12px; }
+  .stat { background: rgba(255,255,255,0.12); border-radius: 12px; padding: 10px 20px; min-width: 200px; }
+  .stat b { display: block; font-size: 32px; font-weight: 700; line-height: 1.15; font-variant-numeric: tabular-nums; }
+  .stat b small { font-size: 16px; font-weight: 500; margin-left: 4px; }
+  .stat > span { color: var(--band-muted); font-size: 14px; }
+
+  main { padding: 20px 36px 26px; display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 16px; min-height: 0; }
+  .card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px; padding: 16px 22px; min-width: 0; min-height: 0; }
+  .side { display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 16px; min-height: 0; }
+  h2 { font-size: 20px; margin: 0; font-weight: 600; }
+  .desc { color: var(--text-muted); font-size: 14px; margin: 0 0 12px; }
+
+  /* รายชื่อสมาชิก: แท่งเดียวต่อคน คือจำนวนวันที่ไม่มาเข้ายิม */
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: 14px; font-weight: 600; color: var(--text-muted); padding: 0 8px 8px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  th.r, td.r { text-align: right; }
+  td { padding: 0 8px; height: 64px; border-bottom: 1px solid var(--grid); font-size: 16px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  td b { font-weight: 600; font-size: 17px; }
+  td .sub { display: block; color: var(--text-secondary); font-size: 14px; }
+  .away { display: grid; grid-template-columns: minmax(0, 1fr) 70px; gap: 10px; align-items: center; }
+  .away .track { height: 16px; background: var(--track); border-radius: 0 4px 4px 0; position: relative; }
+  .away .fill { height: 100%; background: var(--series-1-soft); border-radius: 0 4px 4px 0; }
+  .away .fill.over { background: var(--critical); }
+  .away .std { position: absolute; top: -5px; bottom: -5px; border-left: 2px dashed var(--text-secondary); }
+  tr.urgent td { background: #d03b3b14; }
+  tr.urgent td:first-child { box-shadow: inset 4px 0 0 var(--critical); }
+  tr.urgent .val { color: var(--critical); font-weight: 700; }
+  .key { font-size: 14px; color: var(--text-secondary); margin-top: 10px; }
+
+  .cmp { display: grid; gap: 14px; margin-top: 6px; }
+  .cmp-row { display: grid; grid-template-columns: 230px minmax(0, 1fr) 56px; gap: 12px; align-items: center; font-size: 16px; }
+  .cmp-row .track { height: 22px; background: var(--track); border-radius: 0 5px 5px 0; overflow: hidden; }
+  .cmp-row .fill { height: 100%; background: var(--series-1); border-radius: 0 5px 5px 0; }
+  .cmp-row .fill.over { background: var(--critical); }
+  .cmp-row .v { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+  .chart svg { width: 100%; height: auto; display: block; overflow: visible; }
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <section class="band">
+    <div>
+      <div class="eyebrow">FitZone สาขาอารีย์ · ข้อมูล ณ ศุกร์ 30 ต.ค. 2026 · 08:00 น.</div>
+      <h1>Member Retention</h1>
+    </div>
+    <div class="stats">
+      <div class="stat"><b><span id="s-members"></span><small>คน</small></b><span>สมาชิกทั้งหมด</span></div>
+      <div class="stat"><b><span id="s-rate"></span><small>%</small></b><span>อัตราต่ออายุเดือน ต.ค.</span></div>
+      <div class="stat"><b><span id="s-target"></span><small>%</small></b><span>เป้าหมายอัตราต่ออายุ</span></div>
+    </div>
+  </section>
+
+  <main>
+    <section class="card">
+      <h2>สมาชิกที่จะหมดอายุภายใน 45 วัน และไม่ได้มาเข้ายิมนานที่สุด</h2>
+      <p class="desc">8 อันดับแรก เรียงจากไม่มาเข้ายิมนานที่สุด</p>
+      <table>
+        <thead><tr><th>สมาชิก</th><th>ไม่มาเข้ายิมมาแล้ว (วัน)</th><th class="r">หมดอายุในอีก</th><th class="r">สถานะการติดต่อ</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <div class="key">เส้นประ = 14 วัน · แถวสีแดง = ไม่มาเข้ายิมเกิน 14 วัน และหมดอายุภายใน 14 วัน</div>
+    </section>
+
+    <div class="side">
+      <section class="card">
+        <h2>อัตราต่ออายุ แยกตามการมาเข้ายิมก่อนหมดอายุ (%)</h2>
+        <p class="desc">สมาชิกที่หมดอายุช่วง พ.ค.–ต.ค. 2026</p>
+        <div class="cmp" id="cmp"></div>
+      </section>
+      <section class="card">
+        <h2>อัตราต่ออายุรายเดือน (%)</h2>
+        <p class="desc">6 เดือนล่าสุด</p>
+        <div class="chart" id="trend"></div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script>
+  // ข้อมูลจำลอง: สมาชิก FitZone สาขาอารีย์ (ข้อมูล ณ 30 ต.ค. 2026)
+  const FZ = {
+    members: 1284,
+    target: 80,
+    list: [
+      { name: 'สุภัสสรา ว.', phone: '086-956-8434', pkg: '3 เดือน', away: 38, expiry: 18, status: 'ยังไม่ติดต่อ' },
+      { name: 'รัชนี ร.', phone: '089-384-8691', pkg: 'PT 10 ครั้ง', away: 37, expiry: 20, status: 'ยังไม่ติดต่อ' },
+      { name: 'สุภัสสรา ก.', phone: '084-314-7662', pkg: 'รายปี', away: 33, expiry: 8, status: 'ยังไม่ติดต่อ' },
+      { name: 'ปวีณา ท.', phone: '088-207-8339', pkg: '3 เดือน', away: 28, expiry: 3, status: 'ยังไม่ติดต่อ' },
+      { name: 'พงศกร ส.', phone: '088-823-8711', pkg: 'รายเดือน', away: 27, expiry: 40, status: 'โทรแล้ว' },
+      { name: 'อรรถพล จ.', phone: '084-399-4291', pkg: '3 เดือน', away: 25, expiry: 3, status: 'ยังไม่ติดต่อ' },
+      { name: 'ณิชา อ.', phone: '085-317-9553', pkg: 'รายปี', away: 16, expiry: 12, status: 'ยังไม่ติดต่อ' },
+      { name: 'วรเมธ ก.', phone: '089-969-1193', pkg: '3 เดือน', away: 6, expiry: 8, status: 'นัดเข้ายิมแล้ว' },
+    ],
+    byVisit: [
+      { label: 'มาสัปดาห์ละ 2 ครั้งขึ้นไป', rate: 91 },
+      { label: 'มาสัปดาห์ละ 1 ครั้ง', rate: 74 },
+      { label: 'ไม่มาเกิน 14 วัน', rate: 28 },
+    ],
+    monthly: [
+      { m: 'พ.ค.', v: 82 }, { m: 'มิ.ย.', v: 79 }, { m: 'ก.ค.', v: 77 },
+      { m: 'ส.ค.', v: 74 }, { m: 'ก.ย.', v: 73 }, { m: 'ต.ค.', v: 71 },
+    ],
+  };
+  const LIMIT = 14;
+
+  const $ = (id) => document.getElementById(id);
+  $('s-members').textContent = FZ.members.toLocaleString();
+  $('s-rate').textContent = FZ.monthly[FZ.monthly.length - 1].v;
+  $('s-target').textContent = FZ.target;
+
+  const maxAway = 45;
+  // แถวสีแดงเฉพาะคนที่เข้าทั้งสองเงื่อนไข: ไม่มาเกิน 14 วัน และหมดอายุภายใน 14 วัน
+  $('rows').innerHTML = FZ.list.map(m => `
+    <tr class="${m.away > LIMIT && m.expiry <= LIMIT ? 'urgent' : ''}">
+      <td><b>${m.name}</b><span class="sub">${m.phone} · ${m.pkg}</span></td>
+      <td><div class="away"><div class="track"><div class="fill" style="width:${m.away / maxAway * 100}%"></div><div class="std" style="left:${LIMIT / maxAway * 100}%"></div></div><span class="val">${m.away} วัน</span></div></td>
+      <td class="r"><span class="val">${m.expiry} วัน</span></td>
+      <td class="r">${m.status}</td>
+    </tr>`).join('');
+
+  $('cmp').innerHTML = FZ.byVisit.map(r => `
+    <div class="cmp-row"><span>${r.label}</span><div class="track"><div class="fill ${r.rate < 50 ? 'over' : ''}" style="width:${r.rate}%"></div></div><span class="v">${r.rate}%</span></div>`).join('');
+
+  // กราฟเส้นรายเดือน ติดตัวเลขทุกจุด
+  (function () {
+    const T = FZ.monthly, W = 560, H = 330, pad = { l: 44, r: 112, t: 26, b: 28 };
+    const lo = 0, hi = 100;
+    const x = (i) => pad.l + i * (W - pad.l - pad.r) / (T.length - 1);
+    const y = (v) => pad.t + (hi - v) / (hi - lo) * (H - pad.t - pad.b);
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="อัตราต่ออายุลดลงจาก 82% เป็น 71%">`;
+    [0, 25, 50, 75, 100].forEach(v => {
+      s += `<line x1="${pad.l}" x2="${W - pad.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)"/>`;
+      s += `<text x="${pad.l - 8}" y="${y(v) + 5}" text-anchor="end" font-size="14" fill="var(--text-muted)">${v}%</text>`;
+    });
+    s += `<line x1="${pad.l}" x2="${W - pad.r}" y1="${y(FZ.target)}" y2="${y(FZ.target)}" stroke="var(--critical)" stroke-width="1.5" stroke-dasharray="5 4"/>`;
+    s += `<text x="${W - pad.r + 10}" y="${y(FZ.target) + 5}" text-anchor="start" font-size="14" font-weight="600" fill="var(--critical)">เป้าหมาย ${FZ.target}%</text>`;
+    s += `<polyline fill="none" stroke="var(--series-1)" stroke-width="2.5" stroke-linejoin="round" points="${T.map((d, i) => x(i) + ',' + y(d.v)).join(' ')}"/>`;
+    T.forEach((d, i) => {
+      s += `<circle cx="${x(i)}" cy="${y(d.v)}" r="4.5" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"/>`;
+      s += `<text x="${x(i)}" y="${y(d.v) - 12}" text-anchor="middle" font-size="14" font-weight="700" fill="var(--text-primary)">${d.v}%</text>`;
+      s += `<text x="${x(i)}" y="${H - 6}" text-anchor="middle" font-size="14" fill="var(--text-secondary)">${d.m}</text>`;
+    });
+    $('trend').innerHTML = s + '</svg>';
+  })();
+
+  // ย่อขยายผืนงานให้พอดีหน้าจอ
+  function fit() {
+    const st = $('stage'), s = Math.min(innerWidth / 1600, innerHeight / 900);
+    st.style.transform = `translate(${(innerWidth - 1600 * s) / 2}px, ${(innerHeight - 900 * s) / 2}px) scale(${s})`;
+  }
+  addEventListener('resize', fit);
+  fit();
+</script>
+</body>
+</html>

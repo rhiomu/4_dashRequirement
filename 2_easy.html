@@ -225,22 +225,22 @@
 
   // กราฟเส้น % ส่งตรงเวลา ติดตัวเลขทุกวัน
   (function () {
-    const T = DATA.onTimeTrend, W = 720, H = 236, pad = { l: 44, r: 14, t: 24, b: 26 };
-    const lo = 88, hi = 96;
+    const T = DATA.onTimeTrend, W = 720, H = 236, pad = { l: 44, r: 104, t: 24, b: 26 };
+    const lo = 0, hi = 100;
     const x = (i) => pad.l + i * (W - pad.l - pad.r) / (T.length - 1);
     const y = (v) => pad.t + (hi - v) / (hi - lo) * (H - pad.t - pad.b);
     let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="% ส่งตรงเวลาลดลงจาก 94.6 เป็น 90.7">`;
-    [88, 90, 92, 94, 96].forEach(v => {
+    [0, 25, 50, 75, 100].forEach(v => {
       s += `<line x1="${pad.l}" x2="${W - pad.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)"/>`;
       s += `<text x="${pad.l - 6}" y="${y(v) + 4}" text-anchor="end" font-size="13" fill="var(--text-muted)">${v}%</text>`;
     });
     s += `<line x1="${pad.l}" x2="${W - pad.r}" y1="${y(DATA.target)}" y2="${y(DATA.target)}" stroke="var(--critical)" stroke-width="1.5" stroke-dasharray="5 4"/>`;
-    s += `<text x="${W - pad.r}" y="${y(DATA.target) - 6}" text-anchor="end" font-size="13" font-weight="600" fill="var(--critical)">เป้าหมาย ${DATA.target}%</text>`;
+    s += `<text x="${W - pad.r + 8}" y="${y(DATA.target) + 4}" text-anchor="start" font-size="13" font-weight="600" fill="var(--critical)">เป้าหมาย ${DATA.target}%</text>`;
     s += `<polyline fill="none" stroke="var(--series-1)" stroke-width="2.5" stroke-linejoin="round" points="${T.map((v, i) => x(i) + ',' + y(v)).join(' ')}"/>`;
     T.forEach((v, i) => {
       s += `<text x="${x(i)}" y="${H - 8}" text-anchor="middle" font-size="13" fill="var(--text-muted)">${DATA.trendLabels[i]}</text>`;
       s += `<circle cx="${x(i)}" cy="${y(v)}" r="4" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"/>`;
-      s += `<text x="${x(i)}" y="${y(v) + (i % 2 ? 20 : -10)}" text-anchor="middle" font-size="12" font-weight="600" fill="var(--text-primary)">${v.toFixed(1)}</text>`;
+      s += `<text x="${x(i)}" y="${y(v) + 22}" text-anchor="middle" font-size="12" font-weight="600" fill="var(--text-primary)">${v.toFixed(1)}</text>`;
     });
         $('trend').innerHTML = s + '</svg>';
   })();

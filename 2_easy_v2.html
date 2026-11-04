@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SpeedBox Delivery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;600&family=Noto+Sans+Thai+Looped:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #eef0f2;
+    --surface-1: #ffffff;
+    --band: #23262b;
+    --band-text: #f2f3f5;
+    --band-muted: #a7adb6;
+    --border: #e1e4e8;
+    --grid: #eceef1;
+    --track: #eef0f2;
+    --text-primary: #17191c;
+    --text-secondary: #4b5058;
+    --text-muted: #6d737c;
+    --series-1: #f1975f;
+    --series-1-soft: #f9c6a3;
+    --critical: #d03b3b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #121315;
+      --surface-1: #1b1d20;
+      --band: #0c0d0f;
+      --border: #2b2e33;
+      --grid: #25282c;
+      --track: #222428;
+      --text-primary: #f1f2f4;
+      --text-secondary: #c2c6cc;
+      --text-muted: #9097a0;
+      --series-1: #dd6f2f;
+      --series-1-soft: #6b3a1f;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #121315;
+    --surface-1: #1b1d20;
+    --band: #0c0d0f;
+    --border: #2b2e33;
+    --grid: #25282c;
+    --track: #222428;
+    --text-primary: #f1f2f4;
+    --text-secondary: #c2c6cc;
+    --text-muted: #9097a0;
+    --series-1: #dd6f2f;
+    --series-1-soft: #6b3a1f;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; overflow: hidden; }
+  body { background: var(--bg); color: var(--text-primary); font-family: 'Noto Sans Thai Looped', system-ui, sans-serif; font-size: 16px; line-height: 1.4; }
+  h1, .brand { font-family: 'Kanit', 'Noto Sans Thai Looped', sans-serif; font-weight: 500; }
+
+  /* ผืนงานขนาดคงที่ 1600×900 ย่อขยายให้พอดีจอเหมือนสไลด์ */
+  .stage { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; transform-origin: 0 0; display: grid; grid-template-rows: auto minmax(0, 1fr); background: var(--bg); }
+
+  .band { background: var(--band); color: var(--band-text); padding: 22px 36px; display: flex; justify-content: space-between; align-items: center; gap: 24px; }
+  .band .eyebrow { color: var(--band-muted); font-size: 15px; }
+  .band h1 { font-size: 32px; margin: 0; line-height: 1.2; }
+  .band h1 span { color: #f1975f; }
+  .stats { display: flex; gap: 12px; }
+  .stat { background: rgba(255,255,255,0.08); border-radius: 12px; padding: 10px 20px; min-width: 200px; }
+  .stat b { display: block; font-size: 32px; font-weight: 700; line-height: 1.15; font-variant-numeric: tabular-nums; }
+  .stat b small { font-size: 16px; font-weight: 500; margin-left: 4px; }
+  .stat > span { color: var(--band-muted); font-size: 14px; }
+
+  main { padding: 20px 36px 26px; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 16px; min-height: 0; }
+  .card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px; padding: 16px 22px; min-width: 0; min-height: 0; }
+  .two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; min-height: 0; }
+  h2 { font-size: 20px; margin: 0; font-weight: 600; }
+  .desc { color: var(--text-muted); font-size: 14px; margin: 0 0 8px; }
+  .chart svg { width: 100%; height: auto; display: block; overflow: visible; }
+
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: 14px; font-weight: 600; color: var(--text-muted); padding: 0 8px 6px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  th.r, td.r { text-align: right; }
+  td { padding: 0 8px; height: 34px; border-bottom: 1px solid var(--grid); font-size: 16px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .load { display: grid; grid-template-columns: minmax(0, 1fr) 72px; gap: 10px; align-items: center; }
+  .load .track { height: 14px; background: var(--track); border-radius: 0 4px 4px 0; position: relative; }
+  .load .fill { height: 100%; background: var(--series-1-soft); border-radius: 0 4px 4px 0; }
+  .load .fill.over { background: var(--critical); }
+  .load .std { position: absolute; top: -5px; bottom: -5px; border-left: 2px dashed var(--text-secondary); }
+  .over-t { color: var(--critical); font-weight: 700; }
+  .key { font-size: 14px; color: var(--text-secondary); margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <section class="band">
+    <div>
+      <div class="eyebrow">กรุงเทพฯ · 7 วันล่าสุด (24–30 ต.ค. 2026)</div>
+      <h1>Speed<span>Box</span> Delivery</h1>
+    </div>
+    <div class="stats">
+      <div class="stat"><b><span id="s-total"></span><small>ชิ้น</small></b><span>พัสดุทั้งหมด</span></div>
+      <div class="stat"><b><span id="s-ontime"></span><small>%</small></b><span>ส่งตรงเวลา</span></div>
+      <div class="stat"><b><span id="s-target"></span><small>%</small></b><span>เป้าหมายส่งตรงเวลา</span></div>
+    </div>
+  </section>
+
+  <main>
+    <section class="card">
+      <h2>% พัสดุที่ส่งช้ากว่ากำหนด แยกตามเขตปลายทาง</h2>
+      <p class="desc">รวมทุกช่วงเวลา 7 วัน · สีแดง = ส่งช้าเกิน 15%</p>
+      <div class="chart" id="zones"></div>
+    </section>
+
+    <div class="two">
+      <section class="card">
+        <h2>% พัสดุที่ส่งช้า แยกตามช่วงเวลานัดส่ง</h2>
+        <p class="desc">รวมทุกเขต 7 วัน · สีแดง = ส่งช้าเกิน 10%</p>
+        <div class="chart" id="slots"></div>
+      </section>
+      <section class="card">
+        <h2>คนขับและพัสดุต่อคนขับ ช่วง 17:00–21:00 น.</h2>
+        <p class="desc">เฉลี่ยต่อวัน แยกตามเขต</p>
+        <table>
+          <thead><tr><th>เขต</th><th class="r">คนขับ</th><th>พัสดุต่อคนขับต่อรอบ (ชิ้น)</th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <div class="key">เส้นประ = มาตรฐาน 45 ชิ้นต่อคนต่อรอบ · สีแดง = เกินมาตรฐาน</div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script>
+  // ข้อมูลจำลอง: บริษัทขนส่งพัสดุ SpeedBox กรุงเทพฯ (24–30 ต.ค. 2026) ชุดเดียวกับ 2_easy.html
+  const DATA = {
+    target: 95,
+    slots: ['09:00–11:00', '11:00–13:00', '13:00–15:00', '15:00–17:00', '17:00–19:00', '19:00–21:00'],
+    slotShare: [0.12, 0.16, 0.18, 0.2, 0.2, 0.14],
+    zones: [
+      { name: 'ปทุมวัน', daily: 900, late: [4, 5, 5, 6, 8, 7], eveningDrivers: 4 },
+      { name: 'บางรัก', daily: 820, late: [5, 5, 6, 7, 9, 8], eveningDrivers: 4 },
+      { name: 'สาทร', daily: 860, late: [4, 6, 5, 7, 8, 9], eveningDrivers: 4 },
+      { name: 'จตุจักร', daily: 780, late: [5, 4, 6, 6, 9, 8], eveningDrivers: 4 },
+      { name: 'ห้วยขวาง', daily: 640, late: [4, 5, 5, 6, 8, 7], eveningDrivers: 3 },
+      { name: 'บางกะปิ', daily: 520, late: [5, 6, 6, 9, 12, 15], eveningDrivers: 2 },
+      { name: 'บางนา', daily: 380, late: [6, 7, 9, 18, 38, 46], eveningDrivers: 1 },
+      { name: 'ลาดกระบัง', daily: 300, late: [7, 8, 10, 22, 44, 52], eveningDrivers: 1 },
+    ],
+    loadLimit: 45,
+  };
+  const LIMIT = { zone: 15, slot: 10 };
+
+  const $ = (id) => document.getElementById(id);
+  const Z = DATA.zones, sh = DATA.slotShare;
+  Z.forEach(z => {
+    z.vol = z.daily * 7;
+    z.lateN = sh.reduce((s, p, i) => s + z.vol * p * z.late[i] / 100, 0);
+    z.pct = z.lateN / z.vol * 100;
+    // พัสดุต่อคนขับช่วงเย็น = ปริมาณ 2 รอบเย็นต่อวัน ÷ คนขับ ÷ 2 รอบ
+    z.load = z.daily * (sh[4] + sh[5]) / z.eveningDrivers / 2;
+  });
+  const total = Z.reduce((s, z) => s + z.vol, 0), late = Z.reduce((s, z) => s + z.lateN, 0);
+  const slotPct = sh.map((p, i) => Z.reduce((s, z) => s + z.vol * p * z.late[i] / 100, 0) / Z.reduce((s, z) => s + z.vol * p, 0) * 100);
+
+  $('s-total').textContent = Math.round(total).toLocaleString();
+  $('s-ontime').textContent = (100 - late / total * 100).toFixed(1);
+  $('s-target').textContent = DATA.target;
+
+  // กราฟแท่งแนวตั้งพร้อมป้ายค่า ใช้ซ้ำทั้งสองกราฟ
+  function bars(el, items, max, limit, W, H) {
+    const pad = { l: 52, r: 8, t: 26, b: 30 }, step = (W - pad.l - pad.r) / items.length, bw = Math.min(step - 24, 120);
+    const y = (v) => pad.t + (1 - v / max) * (H - pad.t - pad.b);
+    let s = `<svg viewBox="0 0 ${W} ${H}">`;
+    for (let v = 0; v <= max; v += max / 4) {
+      s += `<line x1="${pad.l}" x2="${W - pad.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)"/>`;
+      s += `<text x="${pad.l - 8}" y="${y(v) + 5}" text-anchor="end" font-size="14" fill="var(--text-muted)">${v}%</text>`;
+    }
+    items.forEach((it, i) => {
+      const x = pad.l + i * step + (step - bw) / 2, over = it.v > limit;
+      s += `<path d="M${x} ${y(0)} V${y(it.v) + 4} q0 -4 4 -4 H${x + bw - 4} q4 0 4 4 V${y(0)} Z" fill="${over ? 'var(--critical)' : 'var(--series-1-soft)'}"/>`;
+      s += `<text x="${x + bw / 2}" y="${y(it.v) - 8}" text-anchor="middle" font-size="16" font-weight="700" fill="${over ? 'var(--critical)' : 'var(--text-primary)'}">${it.v.toFixed(1)}%</text>`;
+      s += `<text x="${x + bw / 2}" y="${H - 6}" text-anchor="middle" font-size="15" fill="var(--text-secondary)">${it.label}</text>`;
+    });
+    el.innerHTML = s + '</svg>';
+  }
+  bars($('zones'), Z.map(z => ({ label: z.name, v: z.pct })), 40, LIMIT.zone, 1520, 215);
+  bars($('slots'), DATA.slots.map((s, i) => ({ label: s, v: slotPct[i] })), 20, LIMIT.slot, 740, 320);
+
+  const maxLoad = 80;
+  $('rows').innerHTML = Z.map(z => {
+    const over = z.load > DATA.loadLimit;
+    return `<tr>
+      <td>${z.name}</td>
+      <td class="r">${z.eveningDrivers} คน</td>
+      <td><div class="load"><div class="track"><div class="fill ${over ? 'over' : ''}" style="width:${z.load / maxLoad * 100}%"></div><div class="std" style="left:${DATA.loadLimit / maxLoad * 100}%"></div></div><span class="${over ? 'over-t' : ''}">${Math.round(z.load)} ชิ้น</span></div></td>
+    </tr>`;
+  }).join('');
+
+  // ย่อขยายผืนงานให้พอดีหน้าจอ
+  function fit() {
+    const st = $('stage'), s = Math.min(innerWidth / 1600, innerHeight / 900);
+    st.style.transform = `translate(${(innerWidth - 1600 * s) / 2}px, ${(innerHeight - 900 * s) / 2}px) scale(${s})`;
+  }
+  addEventListener('resize', fit);
+  fit();
+</script>
+</body>
+</html>
